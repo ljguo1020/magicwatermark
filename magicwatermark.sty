@@ -1,0 +1,238 @@
+%%
+%% This is file `magicwatermark.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% magicwatermark.dtx  (with options: `package')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from magicwatermark.sty.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file magicwatermark.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+\ProvidesPackage{magicwatermark}[2021/12/22 v1.0.0 watermark for ljguo ]
+
+
+\RequirePackage{everypage-1x,tikz,xparse,expl3}
+\ExplSyntaxOn
+\tl_new:N \l_mainpage_tl
+\tl_new:N \l_evenpage_tl
+\tl_new:N \l_oddpage_tl
+\tl_new:N \g_case_tl
+\tl_new:N \g_clear_all_tl
+\msg_new:nnn{clear}{not~have}{I~can~not~find~the~"\clear"~watermark~!}
+\NewDocumentCommand{\PageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_mainpage_tl{#3}
+    }
+    {
+        \tl_set:Nn \l_mainpage_tl
+        {
+            \group_begin:
+            \keys_set:nn{watermark}{#2}
+            \begin{tikzpicture}[remember~picture,overlay]
+                \node
+                [
+                    scale = \fp_use:N\l_scale_fp,
+                    opacity = \fp_use:N\l_opacity_fp,
+                    shift = \tl_use:N\l_shift_tl,
+                    color = \tl_use:N \l_color_tl,
+                    rotate = \fp_use:N \l_rotate_fp,
+                    align = \tl_use:N \l_align_tl,
+                    \bool_if:NTF \l_showframe_bool{draw}{},
+                ]
+                at(current~page.center){#3};
+            \end{tikzpicture}
+            \group_end:
+        }
+    }
+}
+\NewDocumentCommand{\Watermark}{}
+{
+    \AddEverypageHook{\tl_use:N \l_mainpage_tl}
+}
+\NewDocumentCommand{\EvenPageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_evenpage_tl{#3}
+    }
+    {
+        \tl_set:Nn \l_evenpage_tl
+        {
+            \group_begin:
+            \keys_set:nn{watermark}{#2}
+            \begin{tikzpicture}[remember~picture,overlay]
+                \node
+                [
+                    scale = \fp_use:N\l_scale_fp,
+                    opacity = \fp_use:N\l_opacity_fp,
+                    shift = \tl_use:N\l_shift_tl,
+                    color = \tl_use:N \l_color_tl,
+                    rotate = \fp_use:N \l_rotate_fp,
+                    align = \tl_use:N \l_align_tl,
+                    \bool_if:NTF \l_showframe_bool{draw}{},
+                ]
+                at(current~page.center){#3};
+            \end{tikzpicture}
+            \group_end:
+        }
+    }
+}
+\NewDocumentCommand{\EvenWatermark}{}
+{
+    \AddEverypageHook
+    {
+        \int_if_even:nT{\int_use:N \value{page}}
+        {
+            \tl_use:N \l_evenpage_tl
+        }
+    }
+}
+\NewDocumentCommand{\OddPageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_oddpage_tl{#3}
+    }
+    {
+        \tl_set:Nn \l_oddpage_tl
+    {
+        \group_begin:
+        \keys_set:nn{watermark}{#2}
+        \begin{tikzpicture}[remember~picture,overlay]
+            \node
+            [
+                scale = \fp_use:N\l_scale_fp,
+                opacity = \fp_use:N\l_opacity_fp,
+                shift = \tl_use:N\l_shift_tl,
+                color = \tl_use:N \l_color_tl,
+                rotate = \fp_use:N \l_rotate_fp,
+                align = \tl_use:N \l_align_tl,
+                \bool_if:NTF \l_showframe_bool{draw}{},
+            ]
+            at(current~page.center){#3};
+        \end{tikzpicture}
+        \group_end:
+    }
+    }
+}
+\NewDocumentCommand{\OddWatermark}{}
+{
+    \AddEverypageHook
+    {
+        \int_if_odd:nT{\int_use:N \value{page}}
+        {
+            \tl_use:N \l_oddpage_tl
+        }
+    }
+}
+
+\NewDocumentCommand{\NewWatermark}{m}
+{
+    \tl_new:c {l_#1_tl}
+    \tl_put_right:Nn \g_case_tl {{#1}{\tl_clear:c {l_#1_tl}}}
+    \tl_put_right:Nn \g_clear_all_tl {\tl_clear:c {l_#1_tl}}
+}
+\NewDocumentCommand{\MyPageSetup}{O{} m +m}
+{
+    \tl_set:cn {l_#2_tl}
+    {
+        \group_begin:
+        \keys_set:nn{watermark}{#1}
+        \begin{tikzpicture}[remember~picture,overlay]
+            \node
+            [
+                scale = \fp_use:N\l_scale_fp,
+                opacity = \fp_use:N\l_opacity_fp,
+                shift = \tl_use:N\l_shift_tl,
+                color = \tl_use:N \l_color_tl,
+                rotate = \fp_use:N \l_rotate_fp,
+                align = \tl_use:N \l_align_tl,
+                \bool_if:NTF \l_showframe_bool{draw}{},
+            ]
+            at(current~page.center){#3};
+        \end{tikzpicture}
+        \group_end:
+    }
+}
+
+\NewDocumentCommand{\MyWatermark}{m}
+{
+    \AddEverypageHook{\tl_use:c {l_#1_tl}}
+}
+\keys_define:nn{watermark}
+{
+    scale.fp_set:N = \l_scale_fp,
+    scale.initial:n = 1.0,
+    scale.default:n = 1.0,
+    opacity.fp_set:N = \l_opacity_fp,
+    opacity.initial:n = 0.8,
+    opacity.default:n = 0.8,
+    shift.tl_set:N = \l_shift_tl,
+    shift.initial:n = {(0,0)},
+    shift.default:n = {(0,0)},
+    color.tl_set:N = \l_color_tl,
+    color.initial:n = black,
+    color.default:n =black,
+    rotate.fp_set:N =\l_rotate_fp,
+    rotate.initial:n = 0.0,
+    rotate.default:n = 0.0,
+    align.tl_set:N = \l_align_tl,
+    align.initial:n = center,
+    align.default:n = center,
+    showframe.bool_set:N = \l_showframe_bool,
+    showframe.initial:n = false,
+    showframe.default:n = true,
+}
+\tl_gset:Nn \g_clear_all_tl
+{
+    \tl_clear:N \l_mainpage_tl
+    \tl_clear:N \l_evenpage_tl
+    \tl_clear:N \l_oddpage_tl
+}
+\tl_gset:Nn \g_case_tl{
+        {all}
+        {
+          \tl_use:N\g_clear_all_tl
+        }
+        {even}
+        {
+            \tl_clear:N \l_evenpage_tl
+        }
+        {odd}
+        {
+            \tl_clear:N \l_oddpage_tl
+        }
+        {main}
+        {
+            \tl_clear:N \l_mainpage_tl
+        }
+}
+\NewDocumentCommand{\ClearWatermark}{m}
+{
+\clist_gset:Nn \g_clear_clist{#1}
+\clist_map_variable:NNn \g_clear_clist \clear
+{
+    \exp_args:NV \str_case:nVF \clear
+    \g_case_tl
+    {\msg_warning:nn{clear}{not~have}}
+}
+}
+\ExplSyntaxOff
+\endinput
+%%
+%% End of file `magicwatermark.sty'.

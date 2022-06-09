@@ -1,0 +1,517 @@
+% \iffalse meta-comment
+% !TEX program  = XeLaTeX
+%<*internal>
+\iffalse
+%</internal>
+%<*internal>
+\fi
+\begingroup
+  \def\temp{LaTeX2e}
+\expandafter\endgroup\ifx\temp\fmtname\else
+\csname fi\endcsname
+%</internal>
+%<*install>
+
+\input ctxdocstrip %
+
+\let\MetaPrefix\relax
+
+\declarepostamble\emptypostamble
+\endpostamble
+
+\def\MetaPrefix{-- }
+
+
+\let\MetaPrefix\DoubleperCent
+
+\generate
+  {
+%</install>
+%<*internal>
+    \usedir{source/xelatex/magicwatermark}
+    \file{magicwatermark.ins} {\from{\jobname.dtx}{install}}
+%</internal>
+%<*install>
+    \usedir{xetex/xelatex/magicwatermark}
+    \file{magicwatermark.sty} {\from{\jobname.dtx}{package}}
+    \nopreamble\nopostamble
+    \usedir{doc/xelatex/magicwatermark}
+    \file{README.md}   {\from{\jobname.dtx}{readme}}
+  }
+
+\endbatchfile
+%</install>
+%<*internal>
+\fi
+%</internal>
+%<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+%<package>\ProvidesPackage{magicwatermark}[2021/12/22 v1.0.0 watermark for ljguo ]
+%<*driver>
+\documentclass{ctxdoc}
+\usepackage{zhlipsum}
+\usepackage{magicwatermark}
+\renewcommand*\marg[1]{\{\meta{#1}\}}
+\renewcommand*\oarg[1]{[\meta{#1}]}
+\renewcommand*\parg[1]{(\meta{#1})}
+\begin{document}
+%<!--CODEDOC-->  \DisableImplementation
+  \EnableImplementation
+  \DocInput{\jobname.dtx}
+  \IndexLayout
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+
+% \GetFileId{magicwatermark.sty}
+%  
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+%\title{\pkg{magicwatermark}: 魔法水印宏包}
+%\author{郭李军 \\ liguo1020@gmail.com}
+%\def\version{v1.0.1}
+%\date{\today\quad\version}
+%\pagestyle{empty}
+%\PageSetup*
+%{
+%  \begin{tikzpicture}[remember picture,overlay]
+%    \node[cyan,scale = 2,shift={(-1,-1)}] at (current page.north east){--~\thepage~--};
+%  \end{tikzpicture}
+%}
+%\Watermark
+%\maketitle
+%\thispagestyle{empty}
+%\tableofcontents
+%\begin{documentation}
+%\changes{v1.0.1}{2021/12/21}{实现了一些基本功能}
+%\begin{abstract}
+%\pkg{magicwatermark} 是一个基于 \pkg{everypage} 和 \pkg{tikz} 宏包，并经过 \LaTeX3 \ 进行封装的宏包，它可以很灵活的设置和清除水印，所有水印内容都放在 \verb|tikz| 的一个 \verb|node| 里面，并处于页面中心。
+%\end{abstract}
+%\section{介绍}
+%目前 \pkg{magicwatermark} 宏包只能实现如下功能
+%\begin{itemize}
+%  \item 设置所有页面的水印
+%  \item 设置奇数页的水印
+%  \item 设置偶数页的水印
+%  \item 新建水印，同页面设置多个水印
+%  \item 清除水印
+%\end{itemize}
+%\section{用户接口}
+%\subsection{提供命令}
+% \begin{function}[added=2021-12-21,updated=2021-12-21]{\PageSetup}
+%   \begin{syntax}
+%     \tn{PageSetup} \oarg{水印参数} \marg{水印内容}
+%   \end{syntax}
+%   此命令用于设置所有页面的水印内容，接受两个参数，第一个参数用于设置一些属性，以 \verb|key=value| 的形式给出， 第二个参数用于设置水印内容，可以是文字、图片、等.
+% \end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\Watermark}
+%\begin{syntax}
+%  \tn{Watermark}
+%\end{syntax}
+% 该命令用于显示上面设置的水印
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\EvenPageSetup}
+%\begin{syntax}
+% \tn{EvenPageSetup}\oarg{水印参数}\marg{水印内容}
+%\end{syntax}
+% 该命令用于设置偶数页的水印内容
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\EvenWatermark}
+%\begin{syntax}
+%  \tn{EvenWatermark}
+%\end{syntax}
+% 该命令用于显示上面设置的偶数页水印
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\OddPageSetup}
+%\begin{syntax}
+% \tn{OddPageSetup}\oarg{水印参数}\marg{水印内容}
+%\end{syntax}
+% 该命令用于设置奇数页的水印内容
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\OddWatermark}
+%\begin{syntax}
+%  \tn{OddWatermark}
+%\end{syntax}
+% 该命令用于显示上面设置的奇数页水印
+%\end{function}
+%\subsection{扩展命令}
+%以下带星号命令用法和上面的类似，与其说是扩展，不如说是取消了限制，以上的命令都将水印内容写在一个\verb|node|中，对于对 TikZ 不太熟练的用户来说，前者更加方
+%便快捷，而后者则更加灵活
+%\begin{function}[added=2022-01-07,updated=2022-01-07]{\PageSetup*}
+%\begin{syntax}
+% \tn{PageSetup*}\marg{水印内容}
+%\end{syntax}
+%\end{function}
+%\begin{function}[added=2022-01-07,updated=2022-01-07]{\EvenPageSetup*}
+%\begin{syntax}
+% \tn{EvenPageSetup*}\marg{水印内容}
+%\end{syntax}
+%\end{function}
+%\begin{function}[added=2022-01-07,updated=2022-01-07]{\OddPageSetup*}
+%\begin{syntax}
+% \tn{OddPageSetup*}\marg{水印内容}
+%\end{syntax}
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\NewWatermark}
+%\begin{syntax}
+% \tn{NewWatermark}\marg{水印名称} 
+%\end{syntax}
+%该命令用于新建一个水印，注意水印名称不能是 \verb|main|, \verb|even|, \verb|odd|.
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\MyPageSetup}
+%\begin{syntax}
+% \tn{MyPageSetup}\oarg{水印参数}\marg{水印名称}\marg{水印内容}
+%\end{syntax}
+%用于设置新建的水印内容
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\MyWatermark}
+%\begin{syntax}
+%  \tn{MyWatermark}\marg{水印名称}
+%\end{syntax}
+% 该命令用于显示上面设置的水印
+%\end{function}
+%\begin{function}[added=2021-12-21,updated=2021-12-21]{\ClearWatermark}
+%\begin{syntax}
+%  \tn{ClearWatermark}\marg{水印列表}
+%该命令用于清除设置的水印，接受一个逗号列表作为参数，例如：
+%\begin{itemize}
+%  \item \verb|\ClearWatermark{main}| 清除由 \verb|\Watermark| 设置的水印
+%  \item \verb|\ClearWatermark{even,odd}| 清除奇数和偶数页的水印
+%  \item \verb|\ClearWatermark{all}| 清除所有的水印
+%  \item \verb|\ClearWatermark{name1,name2,name3,...}| 
+%\end{itemize}
+%\end{syntax}
+%\end{function}
+%\subsection{参数列表}
+%以上设置命令中的\textbf{水印参数}如下
+%\begin{itemize}
+%  \item \verb|scale = <number>| 用于设置缩放比例
+%  \item \verb|opacity = <number>| 用于设置不透明度
+%  \item \verb|shift = {(x,y)}| 用于按向量 (x,y) 平移
+%  \item \verb|color = <color expression>| 用于设置文本颜色
+%  \item \verb|rotate = <angle>| 用于设置旋转角度
+% \item \verb+align = <center|left|right>+ 用于设置多行文本对齐方式，默认为 center
+%  \item \verb+showframe = <true|false>+ 用于设置是否显示文本框，默认为 false
+%\end{itemize}
+%\subsection{一些说明}
+%所有的显示命令和清除命令都仅对该命令后面的文本生效。
+
+%\end{documentation}
+%
+% \StopEventually{}
+% \section{代码实现}
+%    \begin{macrocode}
+%<*package>
+%    \end{macrocode}
+%  加载必要的宏包
+%    \begin{macrocode}
+\RequirePackage{everypage-1x,tikz,xparse,expl3}
+%    \end{macrocode}
+%  打开\LaTeX3 编程环境
+%    \begin{macrocode}
+\ExplSyntaxOn
+%    \end{macrocode}  
+%  声明一些变量
+%    \begin{macrocode}
+\tl_new:N \l_mainpage_tl
+\tl_new:N \l_evenpage_tl
+\tl_new:N \l_oddpage_tl
+\tl_new:N \g_case_tl 
+\tl_new:N \g_clear_all_tl
+%    \end{macrocode}
+%  定义警告
+%    \begin{macrocode}
+\msg_new:nnn{clear}{not~have}{I~can~not~find~the~"\clear"~watermark~!}
+%    \end{macrocode}
+% \begin{macro}{\PageSetup}
+% 对所有页面设置水印
+%    \begin{macrocode}
+\NewDocumentCommand{\PageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_mainpage_tl{#3}
+    }
+    {
+        \tl_set:Nn \l_mainpage_tl
+        {
+            \group_begin:
+            \keys_set:nn{watermark}{#2}
+            \begin{tikzpicture}[remember~picture,overlay]
+                \node
+                [
+                    scale = \fp_use:N\l_scale_fp,
+                    opacity = \fp_use:N\l_opacity_fp,
+                    shift = \tl_use:N\l_shift_tl,
+                    color = \tl_use:N \l_color_tl,
+                    rotate = \fp_use:N \l_rotate_fp,
+                    align = \tl_use:N \l_align_tl,
+                    \bool_if:NTF \l_showframe_bool{draw}{},
+                ]
+                at(current~page.center){#3};
+            \end{tikzpicture}
+            \group_end:
+        }
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\Watermark}
+% 用于显示由 \verb|\PageSetup| 命令设置的水印
+%    \begin{macrocode}
+\NewDocumentCommand{\Watermark}{}
+{   
+    \AddEverypageHook{\tl_use:N \l_mainpage_tl}
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\EvenPageSetup}
+% 对偶数页设置水印
+%    \begin{macrocode}
+\NewDocumentCommand{\EvenPageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_evenpage_tl{#3}  
+    }
+    {
+        \tl_set:Nn \l_evenpage_tl
+        {
+            \group_begin:
+            \keys_set:nn{watermark}{#2}
+            \begin{tikzpicture}[remember~picture,overlay]
+                \node
+                [
+                    scale = \fp_use:N\l_scale_fp,
+                    opacity = \fp_use:N\l_opacity_fp,
+                    shift = \tl_use:N\l_shift_tl,
+                    color = \tl_use:N \l_color_tl,
+                    rotate = \fp_use:N \l_rotate_fp,
+                    align = \tl_use:N \l_align_tl,
+                    \bool_if:NTF \l_showframe_bool{draw}{},
+                ]
+                at(current~page.center){#3};
+            \end{tikzpicture}
+            \group_end:
+        }
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\EvenWatermark}
+% 用于显示由 \verb|\EvenPageSetup| 命令设置的水印
+%    \begin{macrocode}
+\NewDocumentCommand{\EvenWatermark}{}
+{   
+    \AddEverypageHook
+    {
+        \int_if_even:nT{\int_use:N \value{page}}
+        {       
+            \tl_use:N \l_evenpage_tl
+        } 
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\OddPageSetup}
+% 对奇数页设置水印 
+%    \begin{macrocode}
+\NewDocumentCommand{\OddPageSetup}{sO{}+m}
+{
+    \IfBooleanTF{#1}
+    {
+        \tl_set:Nn \l_oddpage_tl{#3} 
+    }
+    {
+        \tl_set:Nn \l_oddpage_tl
+    {
+        \group_begin:
+        \keys_set:nn{watermark}{#2}
+        \begin{tikzpicture}[remember~picture,overlay]
+            \node
+            [
+                scale = \fp_use:N\l_scale_fp,
+                opacity = \fp_use:N\l_opacity_fp,
+                shift = \tl_use:N\l_shift_tl,
+                color = \tl_use:N \l_color_tl,
+                rotate = \fp_use:N \l_rotate_fp,
+                align = \tl_use:N \l_align_tl,
+                \bool_if:NTF \l_showframe_bool{draw}{},
+            ]
+            at(current~page.center){#3};
+        \end{tikzpicture}
+        \group_end:
+    }
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\OddWatermark}
+% 用于显示由 \verb|\OddPageSetup| 命令设置的水印
+%    \begin{macrocode}
+\NewDocumentCommand{\OddWatermark}{}
+{   
+    \AddEverypageHook
+    {
+        \int_if_odd:nT{\int_use:N \value{page}}
+        {       
+            \tl_use:N \l_oddpage_tl
+        } 
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\NewWatermark}
+% 用于新建一个水印
+%    \begin{macrocode}
+\NewDocumentCommand{\NewWatermark}{m}
+{
+    \tl_new:c {l_#1_tl} 
+    \tl_put_right:Nn \g_case_tl {{#1}{\tl_clear:c {l_#1_tl}}}
+    \tl_put_right:Nn \g_clear_all_tl {\tl_clear:c {l_#1_tl}}
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\MyPageSetup}
+% 用于设置新建的水印 
+%    \begin{macrocode}
+\NewDocumentCommand{\MyPageSetup}{O{} m +m}
+{
+    \tl_set:cn {l_#2_tl}
+    { 
+        \group_begin:
+        \keys_set:nn{watermark}{#1}
+        \begin{tikzpicture}[remember~picture,overlay]
+            \node
+            [
+                scale = \fp_use:N\l_scale_fp,
+                opacity = \fp_use:N\l_opacity_fp,
+                shift = \tl_use:N\l_shift_tl,
+                color = \tl_use:N \l_color_tl,
+                rotate = \fp_use:N \l_rotate_fp,
+                align = \tl_use:N \l_align_tl,
+                \bool_if:NTF \l_showframe_bool{draw}{},   
+            ]
+            at(current~page.center){#3};
+        \end{tikzpicture}
+        \group_end:
+    }    
+}
+%    \end{macrocode}
+% \end{macro}
+
+
+
+% \begin{macro}{\MyWatermark}
+% 用于显示由 \verb|\MyPageSetup| 命令设置的水印
+%    \begin{macrocode}
+\NewDocumentCommand{\MyWatermark}{m}
+{
+    \AddEverypageHook{\tl_use:c {l_#1_tl}}
+}
+%    \end{macrocode}
+% \end{macro}
+% 定义一些可选参数, 用于对水印进行设置
+%    \begin{macrocode}
+\keys_define:nn{watermark}
+{
+    scale.fp_set:N = \l_scale_fp,
+    scale.initial:n = 1.0,
+    scale.default:n = 1.0,
+    opacity.fp_set:N = \l_opacity_fp,
+    opacity.initial:n = 0.8,
+    opacity.default:n = 0.8,
+    shift.tl_set:N = \l_shift_tl,
+    shift.initial:n = {(0,0)},
+    shift.default:n = {(0,0)},
+    color.tl_set:N = \l_color_tl,
+    color.initial:n = black,
+    color.default:n =black,
+    rotate.fp_set:N =\l_rotate_fp,
+    rotate.initial:n = 0.0,
+    rotate.default:n = 0.0,
+    align.tl_set:N = \l_align_tl,
+    align.initial:n = center,
+    align.default:n = center,
+    showframe.bool_set:N = \l_showframe_bool,
+    showframe.initial:n = false,
+    showframe.default:n = true,
+}
+%    \end{macrocode}
+% \begin{macro}{\g_clear_all_tl}
+% 用于保存待清空的所有水印
+%    \begin{macrocode}
+\tl_gset:Nn \g_clear_all_tl
+{
+    \tl_clear:N \l_mainpage_tl
+    \tl_clear:N \l_evenpage_tl
+    \tl_clear:N \l_oddpage_tl
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\g_case_tl}
+% 用于保存一些开关
+%    \begin{macrocode}
+\tl_gset:Nn \g_case_tl{
+        {all}
+        {
+          \tl_use:N\g_clear_all_tl 
+        }
+        {even}
+        {
+            \tl_clear:N \l_evenpage_tl
+        }
+        {odd}
+        {
+            \tl_clear:N \l_oddpage_tl
+        } 
+        {main}
+        {
+            \tl_clear:N \l_mainpage_tl
+        }
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\ClearWatermark}
+% 用于清除设置的水印
+%    \begin{macrocode}
+\NewDocumentCommand{\ClearWatermark}{m}
+{
+\clist_gset:Nn \g_clear_clist{#1}
+\clist_map_variable:NNn \g_clear_clist \clear
+{  
+    \exp_args:NV \str_case:nVF \clear
+    \g_case_tl
+    {\msg_warning:nn{clear}{not~have}}
+}  
+}
+%    \end{macrocode}
+% \end{macro}
+%  关闭\LaTeX3 编程环境
+%    \begin{macrocode}
+\ExplSyntaxOff
+%    \end{macrocode}
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+% \Finale
+%
+\endinput
