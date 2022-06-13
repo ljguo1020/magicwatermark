@@ -48,7 +48,26 @@
 %<package>\ProvidesPackage{magicwatermark}[2021/12/22 v1.0.0 watermark for ljguo ]
 %<*driver>
 \documentclass{ctxdoc}
-\usepackage{zhlipsum}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{listings}
+\lstset{
+frame=tb,framerule=2pt,language={[LaTeX]TeX},basicstyle={\ttfamily},
+language={[LaTeX]TeX},
+keywordstyle=\color{red!70!black}\bfseries,
+keywordstyle={[2]\color{blue!70!black}\bfseries},
+morekeywords={PageSetup,Watermark,NewWatermark,MyPageSetup,MyWatermark,EvenPageSetup,OddPageSetup,EvenWatermark,OddWatermark}}
+\usepackage{fontspec}
+\IfFontExistsTF{calibri.ttf}
+{
+  \setmainfont{calibri.ttf}[
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+  ]
+}
+{}
+\setCJKmainfont[AutoFakeBold,AutoFakeSlant]{simfang.ttf}
 \usepackage{magicwatermark}
 \renewcommand*\marg[1]{\{\meta{#1}\}}
 \renewcommand*\oarg[1]{[\meta{#1}]}
@@ -213,6 +232,67 @@
 %\subsection{一些说明}
 %所有的显示命令和清除命令都仅对该命令后面的文本生效。
 
+%\section{Examples}
+%\subsection{不带星号}
+%\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\PageSetup[
+  rotate = 30, % 设置旋转角度
+  color = red!80, % 设置水印内容颜色
+  scale = 6 % 设置比例
+]{
+  水印内容
+}
+\Watermark % 全文生效
+\begin{document}
+...
+\end{document}
+\end{lstlisting}
+%\subsection{奇偶页}
+%\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\EvenPageSetup[color=cyan,showframe,scale=4]{偶数页} % 设置奇数页
+\OddPageSetup[color=purple,showframe,scale=4]{奇数页} % 设置偶数页
+\EvenWatermark % 显示水印
+\OddWatermark
+\begin{document}
+...
+\end{document}
+\end{lstlisting}
+%\subsection{带星号}
+%\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\PageSetup*{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[cyan,scale = 2,shift={(-1,-1)}] at 
+    (current page.north east){--~\thepage~--};
+  \end{tikzpicture}
+}
+\begin{document}
+...
+\Watermark % 该命令之前不生效
+\end{document}
+\end{lstlisting}
+%\subsection{新建水印}
+%\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\NewWatermark{one} % 新建两个水印
+\NewWatermark{two}
+\MyPageSetup[scale=5,color=blue]{one}{水印内容一} % 设置水印
+\MyPageSetup[scale=5,color=red]{two}{水印内容二}
+\begin{document}
+\MyWatermark{one} % 使用第一个水印
+...
+\newpage
+\ClearWatermark{one} % 清除第一个水印
+\MyWatermark{two} % 使用第二个水印
+...
+\end{document}
+\end{lstlisting}
 %\end{documentation}
 %
 % \StopEventually{}
