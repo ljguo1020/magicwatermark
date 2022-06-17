@@ -1,0 +1,212 @@
+\documentclass{l3doc}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{listings}
+\lstset{
+frame=tb,framerule=2pt,language={[LaTeX]TeX},basicstyle={\ttfamily},
+language={[LaTeX]TeX},
+keywordstyle=\color{red!70!black}\bfseries,
+keywordstyle={[2]\color{blue!70!black}\bfseries},
+morekeywords={PageSetup,Watermark,NewWatermark,MyPageSetup,MyWatermark,EvenPageSetup,OddPageSetup,EvenWatermark,OddWatermark,ClearWatermark}}
+\usepackage{fontspec}
+\IfFontExistsTF{calibri.ttf}
+{
+  \setmainfont{calibri.ttf}[
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+  ]
+}
+{}
+\usepackage{magicwatermark}
+\renewcommand*\marg[1]{\{\meta{#1}\}}
+\renewcommand*\oarg[1]{[\meta{#1}]}
+\renewcommand*\parg[1]{(\meta{#1})}
+\title{\pkg{magicwatermark}}
+\author{lijun guo \\ liguo1020@gmail.com}
+\def\version{v1.0.1}
+\date{\today\quad\version}
+\pagestyle{empty}
+\PageSetup*
+{
+ \begin{tikzpicture}[remember picture,overlay]
+   \node[cyan,scale = 2,shift={(-1,-1)}] at (current page.north east){--~\thepage~--};
+ \end{tikzpicture}
+}
+\Watermark
+\begin{document}
+\maketitle
+\tableofcontents
+\begin{abstract}
+\pkg{magicwatermark} is a package based on \pkg{everypage} and \pkg{tikz} and encapsulated by \LaTeX3 \. It can flexibly set and clear watermarks. All watermark content is placed in \ inside a \verb|node| of \verb|tikz| and in the center of the page.
+\end{abstract}
+\section{Introduction}
+Currently the \pkg{magicwatermark}  package can only implement the following functions
+\begin{itemize}
+ \item Set watermark for all pages
+ \item Set watermark for odd pages
+ \item Set the watermark for even pages
+ \item Create a new watermark and set multiple watermarks on the same page
+ \item Clear watermark
+\end{itemize}
+\section{Interface}
+\subsection{Some command}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\PageSetup}
+  \begin{syntax}
+    \tn{PageSetup} \oarg{option} \marg{content for watermark}
+  \end{syntax}
+  This command is used to set the watermark content of all pages. It accepts two parameters. The first parameter is used to set some properties and is given in the form of \verb|key=value|. The second parameter is used to set the watermark content. It is text, pictures, etc.
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\Watermark}
+\begin{syntax}
+ \tn{Watermark}
+\end{syntax}
+This command is used to display the watermark set above
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\EvenPageSetup}
+\begin{syntax}
+\tn{EvenPageSetup}\oarg{option}\marg{content for watermark}
+\end{syntax}
+This command is used to set the watermark content of even pages
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\EvenWatermark}
+\begin{syntax}
+ \tn{EvenWatermark}
+\end{syntax}
+This command is used to display the even page watermark set above
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\OddPageSetup}
+\begin{syntax}
+\tn{OddPageSetup}\oarg{option}\marg{content for watermark}
+\end{syntax}
+This command is used to set the watermark content of odd pages
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\OddWatermark}
+\begin{syntax}
+ \tn{OddWatermark}
+\end{syntax}
+This command is used to display the odd page watermark set above
+\end{function}
+\subsection{Add command}
+The usage of the following commands with asterisks is similar to the above. It is not so much an extension as it is a cancellation of restrictions. The above commands all write the watermark content in a \verb|node|, for users who are not familiar with TikZ , the former is more square is convenient and fast, while the latter is more flexible
+\begin{function}[added=2022-01-07,updated=2022-01-07]{\PageSetup*}
+\begin{syntax}
+\tn{PageSetup*}\marg{content for watermark}
+\end{syntax}
+\end{function}
+\begin{function}[added=2022-01-07,updated=2022-01-07]{\EvenPageSetup*}
+\begin{syntax}
+\tn{EvenPageSetup*}\marg{content for watermark}
+\end{syntax}
+\end{function}
+\begin{function}[added=2022-01-07,updated=2022-01-07]{\OddPageSetup*}
+\begin{syntax}
+\tn{OddPageSetup*}\marg{content for watermark}
+\end{syntax}
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\NewWatermark}
+\begin{syntax}
+\tn{NewWatermark}\marg{watermark name} 
+\end{syntax}
+This command is used to create a new watermark. Note that the watermark name cannot be \verb|main|, \verb|even|, \verb|odd|.
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\MyPageSetup}
+\begin{syntax}
+\tn{MyPageSetup}\oarg{option}\marg{watermark name}\marg{content for watermark}
+\end{syntax}
+Used to set the new watermark content
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\MyWatermark}
+\begin{syntax}
+ \tn{MyWatermark}\marg{watermark name}
+\end{syntax}
+This command is used to display the watermark set above
+\end{function}
+\begin{function}[added=2021-12-21,updated=2021-12-21]{\ClearWatermark}
+\begin{syntax}
+ \tn{ClearWatermark}\marg{watermark list}
+This command is used to clear the set watermark, accepts a comma list as parameter, for example:
+\begin{itemize}
+ \item \verb|\ClearWatermark{main}| clears the watermark set by \verb|\Watermark|
+ \item \verb|\ClearWatermark{even,odd}| clears the watermark on odd and even pages
+ \item \verb|\ClearWatermark{all}| Clear all watermarks
+ \item \verb|\ClearWatermark{name1,name2,name3,...}| 
+\end{itemize}
+\end{syntax}
+\end{function}
+\subsection{option list}
+The \textbf{option} in the above setting command is as follows
+\begin{itemize}
+ \item \verb|scale = <number>| set the scale
+ \item \verb|opacity = <number>| set the opacity
+ \item \verb|shift = {(x,y)}| for translation by vector (x,y)
+ \item \verb|color = <color expression>| set the color
+ \item \verb|rotate = <angle>| Set the rotation angle
+ \item \verb+align = <center|left|right>+ Set the alignment of multi-line text, the default is center
+ \item \verb+showframe = <true|false>+ Set whether to display the frame, the default is false
+\end{itemize}
+\subsection{notes}
+All show and clear commands take effect only on the text following the command.
+
+\section{Examples}
+\subsection{basic}
+\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\PageSetup[
+  rotate = 30, % set the rotation angle
+  color = red!80, % set color for watermark content
+  scale = 6 % set the scale
+]{
+  watermark content
+}
+\Watermark 
+\begin{document}
+...
+\end{document}
+\end{lstlisting}
+\subsection{Odd and Even Pages}
+\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\EvenPageSetup[color=cyan,showframe,scale=4]{Even page} % Even page
+\OddPageSetup[color=purple,showframe,scale=4]{Odd page} % Odd page 
+\EvenWatermark % show watermark
+\OddWatermark
+\begin{document}
+...
+\end{document}
+\end{lstlisting}
+\subsection{star}
+\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\PageSetup*{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[cyan,scale = 2,shift={(-1,-1)}] at 
+    (current page.north east){--~\thepage~--};
+  \end{tikzpicture}
+}
+\begin{document}
+...
+\Watermark % This order did not take effect before
+\end{document}
+\end{lstlisting}
+\subsection{New watermark}
+\begin{lstlisting}
+\documentclass{ctexart}
+\usepackage{magicwatermark}
+\NewWatermark{one} % new 
+\NewWatermark{two}
+\MyPageSetup[scale=5,color=blue]{one}{content one} % setting 
+\MyPageSetup[scale=5,color=red]{two}{content two}
+\begin{document}
+\MyWatermark{one} % use watermark one
+...
+\newpage
+\ClearWatermark{one} % clear watermark one
+\MyWatermark{two} % use watermark two
+...
+\end{document}
+\end{lstlisting}
+\end{document}
