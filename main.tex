@@ -5,14 +5,16 @@
 \usepackage{magicwatermark}
 
 
+\def\cmda{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-a}}
+\def\cmdb{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-b}}
+
+\MagicWatermark{odd, ix, 8, 20-34, 3X+1, 70-ii}{\cmda}
+\MagicWatermark{even, 5}{\cmdb}
+
+
 \begin{document}
 
 
-
-\MagicWatermark{odd, 2, 8, 20-34, 3X+1, 70-ii}
-{%
-    \includegraphics[width = \paperwidth, height = \paperheight]{example-image-a}%
-}
 
 
 

@@ -65,7 +65,7 @@
     {
       \tl_if_eq:nnTF { ##1 } { even } % even, push 2X
       {
-        \clist_put_right:Nn \l__mw_list_expression_clist  { 2X }
+        \clist_put_right:Nn \l__mw_list_expression_clist  { 2X + 0 }
       }
       {
         \tl_if_in:nnTF { ##1 } { X } % expression, push ##1
@@ -252,11 +252,17 @@
 
 
 \cs_new_nopar:Npn \__mw_list_parser:nN #1#2 {
+
   % case 1 -> odd, even
   % case 2 -> number, 1
   % case 3 -> roman, i
   % case 4 -> range, 1-5, 3-ii
   % case 5 -> expression, 3X + 1
+  \clist_clear:N \l__mw_list_arabic_number_clist 
+  \clist_clear:N \l__mw_list_roman_number_clist 
+  \clist_clear:N \l__mw_list_range_clist 
+  \clist_clear:N \l__mw_list_expression_clist
+  \clist_clear:N \l__mw_tmpa_clist 
   \__mw_list_parser_aux:n { #1 }
 
   \clist_map_inline:Nn \l__mw_list_arabic_number_clist
@@ -313,17 +319,17 @@
 
 
 \NewDocumentCommand{\MagicWatermark}{m+m}{
-  \__mw_parser:nn {#1} {#2}
-  \clist_log:N \l__mw_tmpc_clist
-  \AddEverypageHook{
-    \tikz[remember~picture, overlay] \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .75] at (current~page.center) {
-      \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
-      {
-        \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
-      }
-    };
+  \AtBeginDocument{
+    \__mw_parser:nn {#1} {#2}
+    \AddEverypageHook{
+      \tikz[remember~picture, overlay] \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .75] at (current~page.center) {
+        \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
+        {
+          \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
+        }
+      };
+    }
   }
- 
 }
 
 
