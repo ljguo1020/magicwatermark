@@ -4,43 +4,51 @@
 
 \usepackage{magicwatermark}
 
+\usepackage[margin = 2cm]{geometry}
 
-\def\cmda{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-a}}
-\def\cmdb{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-b}}
-
+\pagestyle{empty}
 \MagicWatermark{%
-    % total page = 90
+    % total page = 26
+    % setup = {
+    %     list = {*}, % all page
+    %     style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, % extend tikz
+    %     content = {
+    %         \foreach \x in {0, ..., 800} {Watermark }
+    %     }
+    % },
+    % setup = {
+    %     list = {3, 6-8, 20-ii}, % 3, 6, 7, 8, 20, 21, 22, ..., 25
+    %     style = {scale = 4, rotate = 45, text = red}, 
+    %     content = {Large Text},
+    %     is append = true
+    % },
+    % setup = {
+    %     list = {even}, % 2, 4, 6, ..., 90
+    %     style = {scale = 5, red, opacity = 1},
+    %     content = {\fbox{SSS}}
+    % },
+    % setup = {
+    %     list = {X^2 + 2X + 1}, % 1, 4, 13, 34, ...
+    %     content = {\cmdb}
+    % },
+    % setup = {
+    %     list = {3X + 2}, % 2, 5, 8, 11, ...
+    %     style = {opacity = 1, scale = 3},
+    %     content = {\fbox{AAA}}
+    % }
     setup = {
         list = {*},
-        content = {\LARGE\colorbox{cyan}{XXX}}
-    },
-    setup = {
-        list = {1, 2, 20-25, 80-i}, % 1, 2, 20, 21, ..., 25, 80, 81, ..., 89
-        style = {opacity = 1, draw}, % extend tikz
-        content = {\cmda}
-    },
-    setup = {
-        list = {even}, % 2, 4, 6, ..., 90
-        style = {scale = 5, red, opacity = 1},
-        content = {\fbox{SSS}}
-    },
-    setup = {
-        list = {X^2 + 2X + 1}, % 1, 4, 13, 34, ...
-        content = {\cmdb}
-    },
-    setup = {
-        list = {3X + 2}, % 2, 5, 8, 11, ...
-        style = {opacity = 1, scale = 3},
-        content = {\fbox{AAA}}
+        style = {shift = {(0, -.5\textheight - .8\footskip)}, color = red, scale = 1.5, font = \ttfamily, opacity = 1},
+        content = {\thepage}
     }
 }
 
 \begin{document}
 
-\section{A}
-\subsection{B}
+\ExplSyntaxOn
+    \tl_put_right:Nn \l_tmpa_tl { aa }
+\ExplSyntaxOff
 
-
 \lipsum[1-20]
 \lipsum[1-20]
 \lipsum[1-20]
@@ -48,24 +56,5 @@
 \lipsum[1-20]
 \lipsum[1-20]
 \lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-\lipsum[1-20]
-
-
 
 \end{document}

@@ -32,6 +32,9 @@
 \tl_new:N \g__mw_style_tl 
 \tl_new:N \g__mw_content_tl
 
+\bool_new:N \g__mw_is_append_bool
+\bool_set_false:N \g__mw_is_append_bool
+
 \regex_const:Nn \c__mw_arabic_numbers_regex { ^\d+$ }
 \regex_const:Nn \c__mw_roman_numbers_regex { ^[ivxlcdm]+$ }
 
@@ -146,7 +149,7 @@
 
 \cs_new:Npn \__mw_list_parser_for_arabic_number:n #1 {
   % arabic number
-  \fp_compare:nTF { #1 < \g__mw_last_page_int && #1 > 0 }
+  \fp_compare:nTF { #1 <= \g__mw_last_page_int && #1 > 0 }
   {
     \clist_put_right:Nn \l__mw_tmpa_clist { #1 }
   }
@@ -160,10 +163,10 @@
 
 \cs_new:Npn \__mw_list_parser_for_roman_number:n #1 {
   % roman number
-  \int_set:Nn \l__mw_tmpa_int { \g__mw_last_page_int - \int_from_roman:n { #1 } }
+  \int_set:Nn \l__mw_tmpa_int { \g__mw_last_page_int - \int_from_roman:n { #1 } + 1 }
   \fp_compare:nTF 
   {
-     \l__mw_tmpa_int < \g__mw_last_page_int && \l__mw_tmpa_int > 0 
+     \l__mw_tmpa_int <= \g__mw_last_page_int && \l__mw_tmpa_int > 0 
   }
   {
     \clist_put_right:NV \l__mw_tmpa_clist \l__mw_tmpa_int
@@ -188,7 +191,7 @@
     {
       \exp_args:NNx \int_set:Nn \l__mw_tmpb_int 
       {
-        \g__mw_last_page_int - \exp_not:N \int_from_roman:n { \seq_item:Nn \l__mw_tmpb_seq { 1 } }
+        \g__mw_last_page_int - \exp_not:N \int_from_roman:n { \seq_item:Nn \l__mw_tmpb_seq { 1 } } + 1
       }
     }
     {
@@ -207,7 +210,7 @@
     {
       \exp_args:NNx \int_set:Nn \l__mw_tmpc_int 
       {
-        \g__mw_last_page_int - \exp_not:N \int_from_roman:n { \seq_item:Nn \l__mw_tmpb_seq { 2 } }
+        \g__mw_last_page_int - \exp_not:N \int_from_roman:n { \seq_item:Nn \l__mw_tmpb_seq { 2 } } + 1
       }
     }
     {
@@ -315,7 +318,8 @@
 {
   list .clist_set:N = \g__mw_list_clist,
   style .tl_set:N = \g__mw_style_tl,
-  content .tl_set:N = \g__mw_content_tl
+  content .tl_set:N = \g__mw_content_tl,
+  is~append.bool_set:N = \g__mw_is_append_bool
 }
 
 \keys_define:nn { mw }
@@ -329,7 +333,8 @@
   \keys_set:nn { mw / new }{#1}
   \exp_args:Nx \__mw_parser:n { \g__mw_list_clist }
   \clist_map_inline:Nn \l__mw_tmpc_clist {
-    \tl_gset:cx { g__mw_content_ \int_to_roman:n { ##1 } _tl} 
+
+    \tl_set:Nx \l_tmpa_tl 
     {
       \exp_not:N \tikz[remember~picture, overlay] 
       {
@@ -338,6 +343,14 @@
           \exp_not:V \g__mw_content_tl
         };
       }
+    }
+
+    \bool_if:nTF { \g__mw_is_append_bool && \tl_if_exist_p:c { g__mw_content_ \int_to_roman:n { ##1 } _tl } }
+    {
+      \tl_gput_right:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l_tmpa_tl 
+    }
+    {
+      \tl_gset:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l_tmpa_tl 
     }
   }
   \group_end:
