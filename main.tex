@@ -8,53 +8,34 @@
 \def\cmda{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-a}}
 \def\cmdb{\includegraphics[width = \paperwidth, height = \paperheight]{example-image-b}}
 
-\MagicWatermark{odd, ix, 8, 20-34, 3X+1, 70-ii}{\cmda}
-\MagicWatermark{even, 5}{\cmdb}
-
+\MagicWatermark{%
+    % total page = 90
+    setup = {
+        list = {*},
+        content = {\LARGE\colorbox{cyan}{XXX}}
+    },
+    setup = {
+        list = {1, 2, 20-25, 80-i}, % 1, 2, 20, 21, ..., 25, 80, 81, ..., 89
+        style = {opacity = 1, draw}, % extend tikz
+        content = {\cmda}
+    },
+    setup = {
+        list = {even}, % 2, 4, 6, ..., 90
+        style = {scale = 5, red, opacity = 1},
+        content = {\fbox{SSS}}
+    },
+    setup = {
+        list = {X^2 + 2X + 1}, % 1, 4, 13, 34, ...
+        content = {\cmdb}
+    },
+    setup = {
+        list = {3X + 2}, % 2, 5, 8, 11, ...
+        style = {opacity = 1, scale = 3},
+        content = {\fbox{AAA}}
+    }
+}
 
 \begin{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \section{A}
 \subsection{B}

@@ -18,11 +18,19 @@
 \clist_new:N \l__mw_list_roman_number_clist 
 \clist_new:N \l__mw_list_range_clist 
 \clist_new:N \l__mw_list_expression_clist
+\clist_new:N \g__mw_list_clist
+
+
 
 \clist_new:N \l__mw_tmpa_clist
 \clist_new:N \l__mw_tmpb_clist
 \clist_new:N \l__mw_tmpc_clist
 
+
+\tl_new:N \l__mw_tmpa_tl
+
+\tl_new:N \g__mw_style_tl 
+\tl_new:N \g__mw_content_tl
 
 \regex_const:Nn \c__mw_arabic_numbers_regex { ^\d+$ }
 \regex_const:Nn \c__mw_roman_numbers_regex { ^[ivxlcdm]+$ }
@@ -43,49 +51,58 @@
 
 \cs_new_protected:Npn \__mw_clist_deduplicate:N #1
 {
+  \group_begin:
   \clist_clear:N \l_tmpa_clist
   \clist_map_inline:Nn #1
   {
     \clist_if_in:NnF \l_tmpa_clist { ##1 }
       { \clist_put_right:Nn \l_tmpa_clist { ##1 } }
   }
-  \clist_set_eq:NN #1 \l_tmpa_clist
+  \clist_gset_eq:NN #1 \l_tmpa_clist
+  \group_end:
 }
 
 
 \cs_new:Npn \__mw_list_parser_aux:n #1 {
+
+  \clist_clear:N \l__mw_list_arabic_number_clist 
+  \clist_clear:N \l__mw_list_roman_number_clist 
+  \clist_clear:N \l__mw_list_range_clist 
+  \clist_clear:N \l__mw_list_expression_clist
+
   % split by commas
+  \group_begin:
   \seq_set_split:Nnn \l__mw_tmpa_seq { , } { #1 }
   \seq_map_inline:Nn \l__mw_tmpa_seq
   {
     \tl_if_eq:nnTF { ##1 } { odd } % odd, push 2X + 1
     {
-      \clist_put_right:Nn \l__mw_list_expression_clist  { 2X + 1 }
+      \clist_gput_right:Nn \l__mw_list_expression_clist  { 2X + 1 }
     }
     {
       \tl_if_eq:nnTF { ##1 } { even } % even, push 2X
       {
-        \clist_put_right:Nn \l__mw_list_expression_clist  { 2X + 0 }
+        \clist_gput_right:Nn \l__mw_list_expression_clist  { 2X }
       }
       {
         \tl_if_in:nnTF { ##1 } { X } % expression, push ##1
         {
-          \clist_put_right:Nn \l__mw_list_expression_clist { ##1 }
+          \clist_gput_right:Nn \l__mw_list_expression_clist { ##1 }
         }
         {
           \tl_if_in:nnTF { ##1 } { - } % range, push ##1
           {
-            \clist_put_right:Nn \l__mw_list_range_clist { ##1 }
+            \clist_gput_right:Nn \l__mw_list_range_clist { ##1 }
           }
           {
             \__mw_if_arabic_number:nTF { ##1 }
             {
-              \clist_put_right:Nn \l__mw_list_arabic_number_clist { ##1 }
+              \clist_gput_right:Nn \l__mw_list_arabic_number_clist { ##1 }
             }
             {
               \__mw_if_roman_number:nTF { ##1 }
               {
-                \clist_put_right:Nn \l__mw_list_roman_number_clist { ##1 }
+                \clist_gput_right:Nn \l__mw_list_roman_number_clist { ##1 }
               }
               {
                 % error
@@ -97,6 +114,7 @@
       }
     }
   }
+  \group_end:
 }
 
 
@@ -125,7 +143,6 @@
 \prg_generate_conditional_variant:Nnn \__mw_if_arabic_number:n { x } {p, T, F, TF}
 \prg_generate_conditional_variant:Nnn \__mw_if_roman_number:n { x } {p, T, F, TF}
 
-% \cs_generate_variant:Nn \int_from_roman:n { x }
 
 \cs_new:Npn \__mw_list_parser_for_arabic_number:n #1 {
   % arabic number
@@ -211,43 +228,24 @@
   }
 }
 
-\cs_new:Npn \__mw_list_parser_for_expression_aux:w #1X + #2 \scan_stop: {
-  \clist_clear:N \l__mw_tmpb_clist
-  \__mw_if_arabic_number:nTF { #1 }
-  {
-    \__mw_if_arabic_number:nTF { #2 }
-    {
-      \clist_set:Nn \l__mw_tmpb_clist {#1, #2}
-    }
-    {
-      error~expression~`#1X + #2',
-    }
-  }
-  {
-    error~expression~`#1X + #2',
-  }
-
-} 
-
 \cs_new:Npn \__mw_list_parser_for_expression:n #1 {
-  \__mw_list_parser_for_expression_aux:w #1\scan_stop:
-
   \int_zero:N \l__mw_tmpd_int
   \int_zero:N \l__mw_tmpe_int
-
-  \clist_if_empty:NF \l__mw_tmpb_clist 
-  {
+  \group_begin:
+  \tl_set:Nn \l__mw_tmpa_tl { #1 }
+  \regex_replace_all:nnN { (\d+)X } { \1*\c{l__mw_tmpe_int} } \l__mw_tmpa_tl
+  \tl_replace_all:Nnn \l__mw_tmpa_tl { X } { \l__mw_tmpe_int } 
+  % \tl_show:N \l__mw_tmpa_tl
     \int_while_do:nn { \l__mw_tmpd_int < \g__mw_last_page_int } 
     {
       \int_set:Nn \l__mw_tmpd_int 
       { 
-        \clist_item:Nn \l__mw_tmpb_clist {1} * \l__mw_tmpe_int +
-        \clist_item:Nn \l__mw_tmpb_clist {2}
+        \fp_eval:n { \l__mw_tmpa_tl }
       }
-      \clist_put_right:NV \l__mw_tmpa_clist \l__mw_tmpd_int 
+      \clist_gput_right:NV \l__mw_tmpa_clist \l__mw_tmpd_int 
       \int_incr:N \l__mw_tmpe_int
     }
-  }
+  \group_end:
 }
 
 
@@ -258,13 +256,10 @@
   % case 3 -> roman, i
   % case 4 -> range, 1-5, 3-ii
   % case 5 -> expression, 3X + 1
-  \clist_clear:N \l__mw_list_arabic_number_clist 
-  \clist_clear:N \l__mw_list_roman_number_clist 
-  \clist_clear:N \l__mw_list_range_clist 
-  \clist_clear:N \l__mw_list_expression_clist
-  \clist_clear:N \l__mw_tmpa_clist 
+
   \__mw_list_parser_aux:n { #1 }
 
+  \clist_clear:N \l__mw_tmpa_clist
   \clist_map_inline:Nn \l__mw_list_arabic_number_clist
   {
     \__mw_list_parser_for_arabic_number:n { ##1 }
@@ -298,7 +293,7 @@
 }
 
 
-\cs_new:Npn \__mw_parser:nn #1#2 {
+\cs_new:Npn \__mw_parser:n #1 {
   % \__mw_list_parser:nN { #1 } \l__mw_tmpc_clist
   \clist_clear:N \l__mw_tmpc_clist
   \tl_if_eq:nnTF { #1 } { * } 
@@ -311,25 +306,55 @@
   {
     \__mw_list_parser:nN { #1 } \l__mw_tmpc_clist
   }
-
-  \clist_map_inline:Nn \l__mw_tmpc_clist {
-    \tl_gset:cn { g__mw_content_ \int_to_roman:n { ##1 } _tl} { #2 }
-  }
 }
 
 
-\NewDocumentCommand{\MagicWatermark}{m+m}{
-  \AtBeginDocument{
-    \__mw_parser:nn {#1} {#2}
-    \AddEverypageHook{
-      \tikz[remember~picture, overlay] \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .75] at (current~page.center) {
+
+
+\keys_define:nn { mw / new }
+{
+  list .clist_set:N = \g__mw_list_clist,
+  style .tl_set:N = \g__mw_style_tl,
+  content .tl_set:N = \g__mw_content_tl
+}
+
+\keys_define:nn { mw }
+{
+  setup .code:n = \__mw_new_watermark:n {#1}
+}
+
+
+\cs_new:Npn \__mw_new_watermark:n #1 {
+  \group_begin:
+  \keys_set:nn { mw / new }{#1}
+  \exp_args:Nx \__mw_parser:n { \g__mw_list_clist }
+  \clist_map_inline:Nn \l__mw_tmpc_clist {
+    \tl_gset:cx { g__mw_content_ \int_to_roman:n { ##1 } _tl} 
+    {
+      \exp_not:N \tikz[remember~picture, overlay] 
+      {
+        \exp_not:N \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .5, \exp_not:V \g__mw_style_tl] at (current~page.center) 
+        {
+          \exp_not:V \g__mw_content_tl
+        };
+      }
+    }
+  }
+  \group_end:
+}
+
+
+\NewDocumentCommand{\MagicWatermark}{m}{
+  \group_begin:
+    \AtBeginDocument{
+      \keys_set:nn { mw } { #1 }
+      \AddEverypageHook{
         \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
         {
           \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
         }
-      };
+      }
     }
-  }
+  \group_end:
 }
-
 
