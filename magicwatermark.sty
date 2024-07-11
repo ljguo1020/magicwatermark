@@ -2,6 +2,12 @@
 
 \RequirePackage{tikz, everypage-1x}
 
+\msg_new:nnn {magicwatermark}{ Unable to parse } 
+{
+  Unable~to~parse~this~list~parameter.^^J
+  #1
+}
+
 \seq_new:N \l__mw_tmpa_seq 
 \seq_new:N \l__mw_tmpb_seq 
 \seq_new:N \l__mw_tmpc_seq 
@@ -109,7 +115,10 @@
               }
               {
                 % error
-                error~para~``##1'',
+                \msg_error:nnn {magicwatermark}{ Unable to parse }
+                {
+                  Error~list~parameter~``##1''.
+                }
               }
             }
           }
@@ -155,7 +164,11 @@
   }
   {
     % error
-    error~number~`#1',
+    \msg_error:nnn {magicwatermark}{ Unable to parse }
+    {
+      Error~list~parameter~``#1''.^^J
+      Error~number~``#1''.
+    }
   }
 }
 
@@ -173,7 +186,11 @@
   }
   {
     % error
-    error~roman~`#1',
+    \msg_error:nnn {magicwatermark}{ Unable to parse }
+    {
+      Error~list~parameter~``#1''.^^J
+      Error~roman~number~``#1''.
+    }
   }
 }
 
@@ -197,7 +214,11 @@
     {
       \int_set:Nn \l__mw_tmpb_int { -1 }
       % error
-      error~range~left~`#1',
+      \msg_error:nnn {magicwatermark}{ Unable to parse }
+      {
+        Error~list~parameter~``#1''.^^J
+        Error~range~left~``#1''.
+      }
     }
   }
 
@@ -216,7 +237,11 @@
     {
       \int_set:Nn \l__mw_tmpc_int { -1 }
       % error
-      error~range~right~`#1',
+      \msg_error:nnn {magicwatermark}{ Unable to parse }
+      {
+        Error~list~parameter~``#1''.^^J
+        Error~range~right~``#1''.
+      }
     }
   }
 
