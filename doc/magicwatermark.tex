@@ -260,6 +260,7 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
   }
 }
 \end{example}
+
 \begin{example}[title = 为偶数页页面中心添加文字 Watermark]
 \MagicWatermark{
   setup = {
@@ -267,6 +268,19 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
     style = {scale = 5, text = pink},
     content = {Watermark},
     is append
+  }
+}
+\end{example}
+
+\begin{example}[title = 为第二页到最后一页设置铺满整个页面的文字]
+\MagicWatermark{
+  setup = {
+      pages = {2-i},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, 
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
   }
 }
 \end{example}
