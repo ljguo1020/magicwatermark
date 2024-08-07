@@ -1,4 +1,4 @@
-\ProvidesExplPackage{magicwatermark}{2024/06/11}{v1.0.1}{magic watermark, author}
+\ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2}{magic watermark, author}
 
 \RequirePackage{tikz, everypage-1x}
 
@@ -24,7 +24,7 @@
 \clist_new:N \l__mw_list_roman_number_clist 
 \clist_new:N \l__mw_list_range_clist 
 \clist_new:N \l__mw_list_expression_clist
-\clist_new:N \g__mw_list_clist
+
 
 
 
@@ -34,6 +34,8 @@
 
 
 \tl_new:N \l__mw_tmpa_tl
+\tl_new:N \l__mw_tmpb_tl
+\tl_new:N \g__mw_list_tl
 
 \tl_new:N \g__mw_style_tl 
 \tl_new:N \g__mw_content_tl
@@ -322,7 +324,6 @@
 
 
 \cs_new:Npn \__mw_parser:n #1 {
-  % \__mw_list_parser:nN { #1 } \l__mw_tmpc_clist
   \clist_clear:N \l__mw_tmpc_clist
   \tl_if_eq:nnTF { #1 } { * } 
   {
@@ -341,7 +342,7 @@
 
 \keys_define:nn { mw / new }
 {
-  list .clist_set:N = \g__mw_list_clist,
+  pages .tl_set:N = \g__mw_list_tl,
   style .tl_set:N = \g__mw_style_tl,
   content .tl_set:N = \g__mw_content_tl,
   is~append.bool_set:N = \g__mw_is_append_bool
@@ -356,14 +357,14 @@
 \cs_new:Npn \__mw_new_watermark:n #1 {
   \group_begin:
   \keys_set:nn { mw / new }{#1}
-  \exp_args:Nx \__mw_parser:n { \g__mw_list_clist }
+  \exp_args:NV \__mw_parser:n \g__mw_list_tl
   \clist_map_inline:Nn \l__mw_tmpc_clist {
 
-    \tl_set:Nx \l_tmpa_tl 
+    \tl_set:Ne \l__mw_tmpb_tl 
     {
       \exp_not:N \tikz[remember~picture, overlay] 
       {
-        \exp_not:N \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .5, \exp_not:V \g__mw_style_tl] at (current~page.center) 
+        \exp_not:N \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left, \exp_not:V \g__mw_style_tl] at (current~page.center) 
         {
           \exp_not:V \g__mw_content_tl
         };
@@ -372,10 +373,10 @@
 
     \bool_if:nTF { \g__mw_is_append_bool && \tl_if_exist_p:c { g__mw_content_ \int_to_roman:n { ##1 } _tl } }
     {
-      \tl_gput_right:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l_tmpa_tl 
+      \tl_gput_right:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l__mw_tmpb_tl 
     }
     {
-      \tl_gset:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l_tmpa_tl 
+      \tl_gset:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l__mw_tmpb_tl 
     }
   }
   \group_end:

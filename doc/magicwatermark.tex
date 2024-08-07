@@ -1,0 +1,273 @@
+\documentclass{article}
+
+\usepackage{lipsum}
+
+\usepackage{../magicwatermark}
+
+\usepackage[margin = 2.51828cm]{geometry}
+
+
+\def\pkgname{\textcolor{teal}{\texttt{magicwatermark}}}
+\usepackage{indentfirst}
+\pagestyle{empty}
+
+\usepackage[UTF8, scheme=plain, fontset=none, heading=true, zihao=-4]{ctex}
+\setCJKmainfont[Path=./fonts/, BoldFont={LXGWWenKai-Bold},ItalicFont={LXGWWenKai-Light}]{LXGWWenKai-Regular}
+\setCJKsansfont[Path=./fonts/, BoldFont={LXGWWenKai-Bold}]{LXGWWenKai-Regular}
+\setCJKmonofont[Path=./fonts/, BoldFont={LXGWWenKaiMono-Bold},ItalicFont={LXGWWenKaiMono-Light}]{LXGWWenKaiMono-Regular}
+
+\ctexset{
+%   chapter={
+%     format+=\raggedright,
+%     name = {第,部分},
+%     afterskip = .5cm
+%   },
+  section={
+    format+=\raggedright,
+    afterskip = .5cm
+  },
+  contentsname = {目次}
+}
+
+\usepackage{fontspec}
+\IfFontExistsTF{calibri.ttf}
+{
+  \setmainfont{calibri.ttf}[
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+  ]
+}
+{}
+
+\usepackage[listings,breakable]{tcolorbox}
+
+\ExplSyntaxOn
+\clist_new:N \l_function_variant_list %fuction variant list
+\NewDocumentCommand{\function}{svo} % #1:function name #2: variant list
+{
+  \IfBooleanTF{#1}
+  {
+    \IfNoValueTF{#3}
+    {
+      \begin{tcolorbox}[width=\textwidth,left=1mm,right=1mm,top=1mm,bottom=1mm,sharp~corners,colback=white,boxrule=.5pt,colback=lime!30]
+        \texttt{Function}\hskip -2pt \Triangle\hskip -3pt \texttt{#2}\hfill \examplelabel*
+      \end{tcolorbox}
+    }
+    {
+     \clist_gset:Nn \l_function_variant_list {#3}
+      \begin{tcolorbox}[width=\textwidth,left=1mm,right=1mm,top=1mm,bottom=1mm,sharp~corners,colback=white,boxrule=.5pt,colback=lime!30]
+        \texttt{Function}\hskip -2pt \Triangle\hskip -3pt \texttt{#2\textcolor{gray}{(\clist_use:Nn \l_function_variant_list{|})}} \hfill \examplelabel*
+      \end{tcolorbox}
+    }
+  }
+  {
+      \IfNoValueTF{#3}
+     {
+       \def\functionn{
+          \texttt{#2}
+         }
+     }
+     {
+        \clist_gset:Nn \l_function_variant_list {#3}
+        \def\functionn{
+          \texttt{
+            #2
+            \textcolor{gray}{(\clist_use:Nn \l_function_variant_list{|})} 
+            }
+          }
+     }
+  }
+
+}
+\NewDocumentCommand{\examplelabel}{s}
+{
+  \IfBooleanTF{#1}{
+  \raisebox{-0.5ex}{
+  \tikz{
+  \node[ball~color=purple,circle,outer~sep=0pt,scale=0.5] {\phantom{2}};  
+    }}
+  }{
+     \raisebox{-0.5ex}{
+     \tikz{
+    \node[ball~color=cyan,circle,outer~sep=0pt,scale=0.5,font=\bfseries] {\theexample};  
+    }}
+  }
+}
+\ExplSyntaxOff
+\def\Triangle{ % triangle icon
+  \raisebox{-0.3ex}{
+  \tikz{
+    \fill[scale=2,outer sep=0pt] (240:0.5ex) -- (0:0.5ex) -- (120:0.5ex);
+  }
+}}
+\newcounter{example}
+\tcbset{
+    example style/.style={
+        sharp corners,
+        colback=white,
+        boxrule=.5pt,
+        breakable,
+        left=1mm,right=1mm,top=1mm,bottom=1mm,
+        fonttitle=\bfseries,
+        colbacktitle=lime!30,
+        coltitle=black,
+        % title={MagicWatermark},
+        listing only
+    }
+}
+
+\newtcblisting[use counter=example]{example}[1][]{
+  listing options={
+    style=tcblatex,
+    tabsize = 1,
+    language={[LaTeX]TeX},
+    classoffset=0,
+    morekeywords = {MagicWatermark},
+    keywordstyle={\color[RGB]{178,34,34}\bfseries},
+    commentstyle={\color[RGB]{102,205,170}\itshape},
+    classoffset=1,
+    morekeywords = {setup, pages, content, is, append, style},
+    keywordstyle=\color{cyan!50!green}\bfseries,
+  },
+  example style,
+  #1
+  }
+
+
+\MagicWatermark{
+    setup = {
+        pages = {*},
+        content = {P-\thepage},
+        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+    },
+    setup = {
+      pages = {even},
+      style = {scale = 5, text = pink},
+      content = {Watermark},
+      is append
+    },
+    setup = {
+      pages = {2-i},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large\linespread{1}\selectfont, opacity = .1}, 
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
+    }
+}
+
+
+\def\opt#1{\textcolor{magenta}{\texttt{#1}}}
+\def\para#1{\textcolor[rgb]{0.13, 0.67, 0.8}{\texttt{#1}}}
+
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+
+
+\vspace*{\fill}
+\begin{center}
+  {\Huge \textcolor{teal}{\texttt{magicwatermark}} 宏包\footnote{\url{https://github.com/ljguo1020/magicwatermark}}} \\[.5cm]
+  {\Large 郭李军<ljguo1020@gmail.com>} \\[.5cm]
+  {\Large V1.2}\\[1cm]
+\begin{example}[]
+\MagicWatermark{
+    setup = {
+        pages = {*},
+        content = {P-\thepage},
+        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+    },
+    setup = {
+      pages = {even},
+      style = {scale = 5, text = pink},
+      content = {Watermark},
+      is append
+    },
+    setup = {
+      pages = {2-i},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, 
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
+    }
+} 
+\end{example}
+\end{center}
+
+\vspace*{\fill}
+
+\newpage
+
+
+\linespread{1.3}\selectfont
+\tableofcontents
+
+\section{介绍}
+
+\pkgname{} 是一个全新的水印宏包, 在 2022 年 6 月 17 日发布了第一版, 本次更新并不是基于第一版, 而是进行了重构.
+
+\pkgname{} 基于 \texttt{tikz} 和 \texttt{expl3}, 可以灵活的设置背景或水印.
+
+\section{使用}
+\pkgname{} 的使用, 相比于其它同类功能的包来说, 可以说是易用性最高的, 它只提供了一个命令 \verb|\MagicWatermark|, 命令参数由多个 \opt{setup} 规则组成.
+\begin{example}[]
+\MagicWatermark{
+  setup = {},
+  setup = {},
+  ...
+}
+\end{example}
+
+\opt{setup} 内部接受四个键值选项, 用于配置水印的表现形式.
+
+\subsection{pages}
+\opt{pages} 接受一个逗号分割列表, 用于配置水印作用范围, 例如 \verb|pages = {2, 4, 5, 8-10}|, 表示选中页码为第 2, 4, 5, 8, 9, 10 这些页面.
+
+\opt{pages} 共接受 4 种配置规则, 
+\begin{itemize}
+  \item \para{*}, 表示所有页面;
+  \item \para{odd} 和 \para{oven}, 表示奇偶页;
+  \item 范围, 形如 \para{3-5}, \para{12-ii};
+  \item 表达式, 形如 \para{2X+1}, \para{2X\^{}2+X+1}, 但是变量必须为 \para{X}.
+\end{itemize}
+
+这里假定页面总页数为 24 页, 
+\begin{example}[title = pages 配置规则]
+pages = {*}              =>     1, 2, 3, ..., 24
+pages = {odd}            =>     1, 3, 5, ..., 23
+pages = {1, 3, 5-10}     =>     1, 3, 5, 6, 7, ..., 10
+pages = {1-5, 8, 20-ii}  =>     1, 2, ..., 5, 8, 20, 21, ..., 23
+pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
+\end{example}
+
+\subsection{content}
+\opt{content} 用来设置水印的内容, 它被放在了 \texttt{tikz} 的 \texttt{node} 中, 为此, 想要灵活的设置它, 您需要对 \texttt{node} 有一些了解.
+
+\subsection{style}
+\opt{style} 用于设置容纳水印内容的 \texttt{node} 的样式, 默认为 \para{inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left}.
+
+\subsection{is append}
+\opt{is append} 用于设置是否覆盖当前页已有的水印, 可选值为 \para{true} 和 \para{false}.
+
+\section{使用案例}
+\begin{example}[title = 为所有页面右上角添加页码]
+\MagicWatermark{
+  setup = {
+      pages = {*},
+      content = {P-\thepage},
+      style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+  }
+}
+\end{example}
+\begin{example}[title = 为偶数页页面中心添加文字 Watermark]
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {scale = 5, text = pink},
+    content = {Watermark},
+    is append
+  }
+}
+\end{example}
+\end{document}
