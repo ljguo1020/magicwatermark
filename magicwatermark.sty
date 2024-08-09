@@ -1,11 +1,22 @@
 \ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2}{magic watermark, author}
 
-\RequirePackage{tikz, everypage-1x}
+\RequirePackage{everypage-1x}
 
 \msg_new:nnn {magicwatermark}{ Unable to parse } 
 {
   Unable~to~parse~this~list~parameter.^^J
   #1
+}
+
+\msg_new:nnn {magicwatermark}{ Enable TikZ } 
+{
+  tikz~option~has~been~disabled,^^J
+  style~will~be~ignored.
+}
+
+\msg_new:nnn {magicwatermark}{ Load TikZ } 
+{
+  Please~load~tikz~package~before~magicwatermark.
 }
 
 \seq_new:N \l__mw_tmpa_seq 
@@ -35,6 +46,7 @@
 
 \tl_new:N \l__mw_tmpa_tl
 \tl_new:N \l__mw_tmpb_tl
+\tl_new:N \l__mw_tmpc_tl
 \tl_new:N \g__mw_list_tl
 
 \tl_new:N \g__mw_style_tl 
@@ -42,6 +54,8 @@
 
 \bool_new:N \g__mw_is_append_bool
 \bool_set_false:N \g__mw_is_append_bool
+\bool_new:N \g__mw_tikz_bool
+\bool_set_true:N \g__mw_tikz_bool
 
 \regex_const:Nn \c__mw_arabic_numbers_regex { ^\d+$ }
 \regex_const:Nn \c__mw_roman_numbers_regex { ^[ivxlcdm]+$ }
@@ -130,7 +144,6 @@
   }
   \group_end:
 }
-
 
 \prg_new_conditional:Npnn \__mw_if_arabic_number:n #1 { p, T, F, TF }
 {
@@ -323,17 +336,17 @@
 }
 
 
-\cs_new:Npn \__mw_parser:n #1 {
-  \clist_clear:N \l__mw_tmpc_clist
+\cs_new:Npn \__mw_parser:nN #1#2 {
+  \clist_clear:N #2
   \tl_if_eq:nnTF { #1 } { * } 
   {
     \int_step_inline:nnn { 1 } { \g__mw_last_page_int }
     {
-      \clist_put_right:Nn \l__mw_tmpc_clist { ##1 }
+      \clist_put_right:Nn #2 { ##1 }
     }
   }
   {
-    \__mw_list_parser:nN { #1 } \l__mw_tmpc_clist
+    \__mw_list_parser:nN { #1 } #2
   }
 }
 
@@ -344,8 +357,29 @@
 {
   pages .tl_set:N = \g__mw_list_tl,
   style .tl_set:N = \g__mw_style_tl,
+  % style .code:n = \__mw_parse_style:n { #1 },
   content .tl_set:N = \g__mw_content_tl,
-  is~append.bool_set:N = \g__mw_is_append_bool
+  is~append .bool_set:N = \g__mw_is_append_bool,
+  tikz .bool_set:N = \g__mw_tikz_bool
+}
+
+\cs_new:Npn \__mw_parse_style: {
+  \tl_if_empty:NF \g__mw_style_tl 
+  {
+    \bool_if:NTF \g__mw_tikz_bool 
+    {
+      \IfPackageLoadedTF{tikz}
+      {
+        \tl_set_eq:NN \l__mw_tmpc_tl \g__mw_style_tl 
+      }
+      {
+        \msg_error:nn {magicwatermark}{ Load TikZ } 
+      }
+    }
+    {
+      \msg_warning:nn {magicwatermark}{ Enable TikZ }
+    }
+  }
 }
 
 \keys_define:nn { mw }
@@ -357,18 +391,36 @@
 \cs_new:Npn \__mw_new_watermark:n #1 {
   \group_begin:
   \keys_set:nn { mw / new }{#1}
-  \exp_args:NV \__mw_parser:n \g__mw_list_tl
+
+  % parse style
+  \__mw_parse_style:
+
+  % parse pages
+  \exp_args:NV \__mw_parser:nN \g__mw_list_tl \l__mw_tmpc_clist
+
   \clist_map_inline:Nn \l__mw_tmpc_clist {
 
-    \tl_set:Ne \l__mw_tmpb_tl 
+    \bool_if:NTF \g__mw_tikz_bool
     {
-      \exp_not:N \tikz[remember~picture, overlay] 
+      \IfPackageLoadedTF{tikz}
       {
-        \exp_not:N \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left, \exp_not:V \g__mw_style_tl] at (current~page.center) 
+        \tl_set:Ne \l__mw_tmpb_tl 
         {
-          \exp_not:V \g__mw_content_tl
-        };
+          \exp_not:N \tikz[remember~picture, overlay] 
+          {
+            \exp_not:N \node[inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left, \exp_not:V \g__mw_style_tl] at (current~page.center) 
+            {
+              \exp_not:V \g__mw_content_tl
+            };
+          }
+        }
       }
+      {
+        \msg_error:nn {magicwatermark}{ Load TikZ } 
+      }
+    }
+    {
+      \tl_set:NV \l__mw_tmpb_tl \g__mw_content_tl
     }
 
     \bool_if:nTF { \g__mw_is_append_bool && \tl_if_exist_p:c { g__mw_content_ \int_to_roman:n { ##1 } _tl } }
@@ -397,3 +449,4 @@
   \group_end:
 }
 
+\@onlypreamble\MagicWatermark

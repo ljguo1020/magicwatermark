@@ -123,7 +123,7 @@
     tabsize = 1,
     language={[LaTeX]TeX},
     classoffset=0,
-    morekeywords = {MagicWatermark},
+    morekeywords = {MagicWatermark, foreach, includegraphics},
     keywordstyle={\color[RGB]{178,34,34}\bfseries},
     commentstyle={\color[RGB]{102,205,170}\itshape},
     classoffset=1,
@@ -241,17 +241,21 @@ pages = {1-5, 8, 20-ii}  =>     1, 2, ..., 5, 8, 20, 21, ..., 23
 pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
 \end{example}
 
+\subsection{tikz}
+\opt{tikz} 用于设置是否将水印内容放置在  \texttt{tikz} 的 \texttt{node} 中, 见下文, 可选值为 \para{true} 和 \para{false}, 默认为 \para{true}. 当你需要使用 \opt{tikz} 时, 需要手动加载 \texttt{tikz} 宏包.
+
 \subsection{content}
-\opt{content} 用来设置水印的内容, 它被放在了 \texttt{tikz} 的 \texttt{node} 中, 为此, 想要灵活的设置它, 您需要对 \texttt{node} 有一些了解.
+\opt{content} 用来设置水印的内容, 当 \opt{tikz} 被启用时, 它被放在了 \texttt{tikz} 的 \texttt{node} 中, 为此, 想要灵活的设置它, 您需要对 \texttt{node} 有一些了解.
 
 \subsection{style}
-\opt{style} 用于设置容纳水印内容的 \texttt{node} 的样式, 默认为 \para{inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left}.
+\opt{style} 用于设置容纳水印内容的 \texttt{node} 的样式, 默认为 \para{inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left}, 当 \opt{tikz} 被禁用时, 它会被忽略.
 
 \subsection{is append}
-\opt{is append} 用于设置是否覆盖当前页已有的水印, 可选值为 \para{true} 和 \para{false}.
+\opt{is append} 用于设置是否覆盖当前页已有的水印, 可选值为 \para{true} 和 \para{false}, 默认为 \para{false}.
 
 \section{使用案例}
 \begin{example}[title = 为所有页面右上角添加页码]
+% \usepackage{tikz}
 \MagicWatermark{
   setup = {
       pages = {*},
@@ -262,6 +266,7 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
 \end{example}
 
 \begin{example}[title = 为偶数页页面中心添加文字 Watermark]
+% \usepackage{tikz}
 \MagicWatermark{
   setup = {
     pages = {even},
@@ -273,6 +278,7 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
 \end{example}
 
 \begin{example}[title = 为第二页到最后一页设置铺满整个页面的文字]
+% \usepackage{tikz}
 \MagicWatermark{
   setup = {
       pages = {2-i},
@@ -284,4 +290,84 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
   }
 }
 \end{example}
+
+\begin{example}[title = 为奇偶页设置不同水印]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {scale = 8, rotate = 45, text=red, align = center,font = \linespread{2}\selectfont},
+    content = {
+      Even MagicWatermark\\ 
+      Even MagicWatermark\\
+      Even MagicWatermark\\
+      Even MagicWatermark 
+    }
+  },
+  setup = {
+    pages = {odd},
+    style = {scale = 6, rotate = -45, text = cyan, text width = 1.7\paperwidth, font = \linespread{1.5}\selectfont, align = center},
+    content = {
+      \foreach \x in {0,...,5}{
+          Odd MagicWatermark
+      }
+    }
+  }
+}
+\end{example}
+
+\begin{example}[title = 设置图片为水印]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {opacity = 0.3},
+    content = {
+        \includegraphics{example-image-a}
+    }
+  },
+  setup = {
+    pages = {odd},
+    style = {opacity = .3, rotate=45, text width = 3\paperwidth},
+    content = {
+      \foreach \x in {0, ..., 20}{
+        \foreach \y in {1, 2, 3} {
+          \includegraphics{example-image-b}
+        } \\
+      }
+    }
+  }
+}  
+\end{example}
+
+\begin{example}[title = 禁用 tikz]
+\def\addhead#1#2{%
+  \expandafter\gdef\csname head@content@#1\endcsname{#2}%
+}
+
+\def\printhead#1{%
+  \csname head@content@#1\endcsname%
+}
+
+\addhead{2}{The only way to do great work is to love what you do.}
+\addhead{3}{Success is not final, failure is not fatal: It is the courage to continue that counts.}
+\addhead{4}{In the end, we will remember not the words of our enemies, but the silence of our friends.}
+\addhead{5}{It does not matter how slowly you go as long as you do not stop.}
+
+\NewDocumentCommand{\mywatermark}{}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[yshift = -\headheight - \headsep, text = teal, font = \large] at (current page.north) {\printhead{\thepage}};
+  \end{tikzpicture}
+}
+
+\MagicWatermark{
+  setup = {
+    pages = {2-5},
+    tikz = false,
+    content = \mywatermark
+  }
+}
+\end{example}
+
+
 \end{document}
