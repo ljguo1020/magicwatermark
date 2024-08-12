@@ -1,0 +1,400 @@
+\documentclass{article}
+
+\usepackage{lipsum}
+
+\usepackage{../magicwatermark}
+
+\usepackage[margin = 2.51828cm]{geometry}
+
+
+\def\pkgname{\textcolor{teal}{\texttt{magicwatermark}}}
+\usepackage{indentfirst}
+\pagestyle{empty}
+
+\usepackage[UTF8, scheme=plain, fontset=none, heading=true, zihao=-4]{ctex}
+%\setCJKmainfont[BoldFont={LXGWWenKai-Bold},ItalicFont={LXGWWenKai-Light}]{LXGWWenKai-Regular}
+%\setCJKsansfont[BoldFont={LXGWWenKai-Bold}]{LXGWWenKai-Regular}
+%\setCJKmonofont[BoldFont={LXGWWenKaiMono-Bold},ItalicFont={LXGWWenKaiMono-Light}]{LXGWWenKaiMono-Regular}
+
+\ctexset{
+%   chapter={
+%     format+=\raggedright,
+%     name = {第,部分},
+%     afterskip = .5cm
+%   },
+  section={
+    format+=\raggedright,
+    afterskip = .5cm
+  },
+  contentsname = {Table of contents}
+}
+
+\usepackage{fontspec}
+\IfFontExistsTF{calibri.ttf}
+{
+  \setmainfont{calibri.ttf}[
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+  ]
+}
+{}
+
+\newcommand\blfootnote[1]{
+    \begingroup
+    \renewcommand\thefootnote{}\footnote{#1}
+    \addtocounter{footnote}{-1}
+    \endgroup
+}
+
+\usepackage[listings,breakable]{tcolorbox}
+
+\ExplSyntaxOn
+\clist_new:N \l_function_variant_list %fuction variant list
+\NewDocumentCommand{\function}{svo} % #1:function name #2: variant list
+{
+  \IfBooleanTF{#1}
+  {
+    \IfNoValueTF{#3}
+    {
+      \begin{tcolorbox}[width=\textwidth,left=1mm,right=1mm,top=1mm,bottom=1mm,sharp~corners,colback=white,boxrule=.5pt,colback=lime!30]
+        \texttt{Function}\hskip -2pt \Triangle\hskip -3pt \texttt{#2}\hfill \examplelabel*
+      \end{tcolorbox}
+    }
+    {
+     \clist_gset:Nn \l_function_variant_list {#3}
+      \begin{tcolorbox}[width=\textwidth,left=1mm,right=1mm,top=1mm,bottom=1mm,sharp~corners,colback=white,boxrule=.5pt,colback=lime!30]
+        \texttt{Function}\hskip -2pt \Triangle\hskip -3pt \texttt{#2\textcolor{gray}{(\clist_use:Nn \l_function_variant_list{|})}} \hfill \examplelabel*
+      \end{tcolorbox}
+    }
+  }
+  {
+      \IfNoValueTF{#3}
+     {
+       \def\functionn{
+          \texttt{#2}
+         }
+     }
+     {
+        \clist_gset:Nn \l_function_variant_list {#3}
+        \def\functionn{
+          \texttt{
+            #2
+            \textcolor{gray}{(\clist_use:Nn \l_function_variant_list{|})}
+            }
+          }
+     }
+  }
+
+}
+\NewDocumentCommand{\examplelabel}{s}
+{
+  \IfBooleanTF{#1}{
+  \raisebox{-0.5ex}{
+  \tikz{
+  \node[ball~color=purple,circle,outer~sep=0pt,scale=0.5] {\phantom{2}};
+    }}
+  }{
+     \raisebox{-0.5ex}{
+     \tikz{
+    \node[ball~color=cyan,circle,outer~sep=0pt,scale=0.5,font=\bfseries] {\theexample};
+    }}
+  }
+}
+\ExplSyntaxOff
+\def\Triangle{ % triangle icon
+  \raisebox{-0.3ex}{
+  \tikz{
+    \fill[scale=2,outer sep=0pt] (240:0.5ex) -- (0:0.5ex) -- (120:0.5ex);
+  }
+}}
+\newcounter{example}
+\tcbset{
+    example style/.style={
+        sharp corners,
+        colback=white,
+        boxrule=.5pt,
+        breakable,
+        left=1mm,right=1mm,top=1mm,bottom=1mm,
+        fonttitle=\bfseries,
+        colbacktitle=lime!30,
+        coltitle=black,
+        % title={MagicWatermark},
+        listing only
+    }
+}
+
+\newtcblisting[use counter=example]{example}[1][]{
+  listing options={
+    style=tcblatex,
+    tabsize = 1,
+    language={[LaTeX]TeX},
+    classoffset=0,
+    morekeywords = {MagicWatermark, foreach, includegraphics},
+    keywordstyle={\color[RGB]{178,34,34}\bfseries},
+    commentstyle={\color[RGB]{102,205,170}\itshape},
+    classoffset=1,
+    morekeywords = {setup, pages, content, is, append, style},
+    keywordstyle=\color{cyan!50!green}\bfseries,
+  },
+  example style,
+  #1
+  }
+
+
+\MagicWatermark{
+    setup = {
+        pages = {*},
+        content = {P-\thepage},
+        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+    },
+    setup = {
+      pages = {even},
+      style = {scale = 5, text = pink},
+      content = {Watermark},
+      is append
+    },
+    setup = {
+      pages = {1},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large\linespread{1}\selectfont, opacity = .1},
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
+    }
+}
+
+
+\def\opt#1{\textcolor{magenta}{\texttt{#1}}}
+\def\para#1{\textcolor[rgb]{0.13, 0.67, 0.8}{\texttt{#1}}}
+
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+
+
+\vspace*{\fill}
+\begin{center}
+  {\Huge The \textcolor{teal}{\texttt{magicwatermark}}\footnote{\url{https://github.com/ljguo1020/magicwatermark}} package\blfootnote{English version of the documentation by Jérémy Just <\url{jeremy@jejust.fr}>.}} \\[.5cm]
+  {\Large Guo Li Jun <ljguo1020@gmail.com>} \\[.5cm]
+  {\Large V1.2A}\\[1cm]
+\begin{example}[]
+\MagicWatermark{
+    setup = {
+        pages = {*},
+        content = {P-\thepage},
+        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+    },
+    setup = {
+      pages = {even},
+      style = {scale = 5, text = pink},
+      content = {Watermark},
+      is append
+    },
+    setup = {
+      pages = {1},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1},
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
+    }
+}
+\end{example}
+\end{center}
+
+\vspace*{\fill}
+
+\newpage
+
+
+\linespread{1.3}\selectfont
+\tableofcontents
+
+\section{Presentation}
+
+\pkgname{} is a new watermarking package. Tts first version was released on June 17\textsuperscript{th}, 2022,
+but this update is a complete refactoring.
+
+\pkgname{} is based on \texttt{ti\textit{k}z} and \texttt{expl3}, which gives you a lot of flexibility
+to add a background or a watermark to the pages of your document.
+
+\section{Use}
+
+The use of \pkgname{}, compared to other packages of similar functionality, is a lot easier,
+as it provides a single command, \verb|\MagicWatermark|.
+This command takes a parameter consisting in a number of \opt{setup} rules.
+\begin{example}[]
+\MagicWatermark{
+  setup = {},
+  setup = {},
+  ...
+}
+\end{example}
+
+\opt{setup} internally accepts four key options to configure the presentation of the watermark.
+
+\subsection{pages}
+\opt{pages} accepts a comma-separated list which defines the scope of the watermark,\linebreak[4] \textit{e.g.} \verb|pages = {2, 4, 5, 8-10}| indicates that the watermark is to appear on pages 2, 4, 5, 8, 9 and 10.
+
+\opt{pages} accepts a total of four configuration rules:
+\begin{itemize}
+  \item \para{*}, indicating all pages;
+  \item \para{odd} and \para{even}, for odd/even pages;
+  \item a range, like \para{3-5} or \para{12-ii};
+  \item expressions, such as \para{2X+1}, \para{2X\^{}2+X+1} (the variable \textbf{has to be} \para{X}).
+\end{itemize}
+
+Here, we assume that the total number of pages is 24:
+\begin{example}[title = pages machine rules]
+pages = {*}              =>     1, 2, 3, ..., 24
+pages = {odd}            =>     1, 3, 5, ..., 23
+pages = {1, 3, 5-10}     =>     1, 3, 5, 6, 7, ..., 10
+pages = {1-5, 8, 20-ii}  =>     1, 2, ..., 5, 8, 20, 21, ..., 23
+pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
+\end{example}
+
+\subsection{tikz}
+
+\opt{tikz} is used to choose whether the watermark content will be placed
+in a \texttt{tikz} \texttt{node} (see below).
+The two possible values are \para{true} and \para{false}. The default is \para{true}.
+When you choose to use \opt{tikz}, you need to load the \texttt{tikz} package manually.
+
+\subsection{content}
+
+\opt{content} is used to define the content of the watermark, when \opt{tikz} is enabled.
+The given value is placed inside the \texttt{tikz} \texttt{node};
+for this reason, to take full avantage of this syntax, you need to have some knowledge
+of the available \texttt{node} options.
+
+\subsection{style}
+
+\opt{style} is used to set the style of the \texttt{node} that holds the watermark content.
+The default style is \para{inner~sep = 0pt, outer~sep = 0pt, opacity = .5, align = left},
+and is ignored when \opt{tikz} is disabled.
+
+\subsection{is append}
+
+\opt{is append} is used to choose whether or not to override the existing watermark on the
+current page. The available values are \para{true} and \para{false}, the default is \para{false}.
+
+
+\section{Examples}
+
+\begin{example}[title = Add page number to the top right corner of each pages:]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+      pages = {*},
+      content = {P-\thepage},
+      style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+  }
+}
+\end{example}
+
+\begin{example}[title = Add text watermark at the center of even numbered pages:]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {scale = 5, text = pink},
+    content = {Watermark},
+    is append
+  }
+}
+\end{example}
+
+\begin{example}[title = Add a full page of text as watermark to the second to last page:]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+      pages = {2-i},
+      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1},
+      content = {
+          \foreach \x in {0, ..., 500} {Magic Watermark }
+      },
+      is append
+  }
+}
+\end{example}
+
+\begin{example}[title = Use different watermarks for odd and even pages:]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {scale = 8, rotate = 45, text=red, align = center,font = \linespread{2}\selectfont},
+    content = {
+      Even MagicWatermark\\
+      Even MagicWatermark\\
+      Even MagicWatermark\\
+      Even MagicWatermark
+    }
+  },
+  setup = {
+    pages = {odd},
+    style = {scale = 6, rotate = -45, text = cyan, text width = 1.7\paperwidth, font = \linespread{1.5}\selectfont, align = center},
+    content = {
+      \foreach \x in {0,...,5}{
+          Odd MagicWatermark
+      }
+    }
+  }
+}
+\end{example}
+
+\begin{example}[title = Use an image as watermark:]
+% \usepackage{tikz}
+\MagicWatermark{
+  setup = {
+    pages = {even},
+    style = {opacity = 0.3},
+    content = {
+        \includegraphics{example-image-a}
+    }
+  },
+  setup = {
+    pages = {odd},
+    style = {opacity = .3, rotate=45, text width = 3\paperwidth},
+    content = {
+      \foreach \x in {0, ..., 20}{
+        \foreach \y in {1, 2, 3} {
+          \includegraphics{example-image-b}
+        } \\
+      }
+    }
+  }
+}
+\end{example}
+
+\begin{example}[title = Disable tikz]
+\def\addhead#1#2{%
+  \expandafter\gdef\csname head@content@#1\endcsname{#2}%
+}
+
+\def\printhead#1{%
+  \csname head@content@#1\endcsname%
+}
+
+\addhead{2}{The only way to do great work is to love what you do.}
+\addhead{3}{Success is not final, failure is not fatal: It is the courage to continue that counts.}
+\addhead{4}{In the end, we will remember not the words of our enemies, but the silence of our friends.}
+\addhead{5}{It does not matter how slowly you go as long as you do not stop.}
+
+\NewDocumentCommand{\mywatermark}{}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[yshift = -\headheight - \headsep, text = teal, font = \large] at (current page.north) {\printhead{\thepage}};
+  \end{tikzpicture}
+}
+
+\MagicWatermark{
+  setup = {
+    pages = {2-5},
+    tikz = false,
+    content = \mywatermark
+  }
+}
+\end{example}
+
+
+\end{document}
