@@ -1,6 +1,5 @@
 \ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2A}{magic watermark, author}
 
-\RequirePackage{everypage-1x}
 
 \msg_new:nnn {magicwatermark}{ Unable to parse } 
 {
@@ -439,10 +438,12 @@
   \group_begin:
     \AtBeginDocument{
       \keys_set:nn { mw } { #1 }
-      \AddEverypageHook{
-        \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
-        {
-          \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
+      \AddToHook{shipout/background}{
+        \put(.5\paperwidth,-.5\paperheight){
+          \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
+          {
+            \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
+          }
         }
       }
     }

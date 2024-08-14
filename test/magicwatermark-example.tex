@@ -1,0 +1,21 @@
+\documentclass{article}
+
+\usepackage[margin = 2cm]{geometry}
+
+\usepackage{../magicwatermark}
+
+\usepackage{lipsum}
+
+\usepackage{xcolor}
+
+\MagicWatermark{
+    setup = {
+        pages = {*},
+        content = {\LARGE \color{red} P-\thepage},
+        tikz = false
+    }
+}
+\begin{document}
+
+\lipsum[1-20]
+\end{document}
