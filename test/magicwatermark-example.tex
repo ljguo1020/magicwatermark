@@ -2,6 +2,8 @@
 
 \usepackage[margin = 2cm]{geometry}
 
+\usepackage{tikz}
+
 \usepackage{../magicwatermark}
 
 \usepackage{lipsum}
@@ -12,7 +14,7 @@
     setup = {
         pages = {*},
         content = {\LARGE \color{red} P-\thepage},
-        tikz = false
+        tikz = true
     }
 }
 \begin{document}
