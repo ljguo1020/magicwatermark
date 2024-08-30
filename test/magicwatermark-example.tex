@@ -11,13 +11,25 @@
 \usepackage{xcolor}
 
 \MagicWatermark{
-    setup = {
-        pages = {*},
+    {
+        pages = {1},
+        style= { scale = 5},
         content = {\LARGE \color{red} P-\thepage},
-        tikz = true
+        tikz = true,
+        overlay = true
+    },
+    {
+        pages = {2-3},
+        style= { scale = 5},
+        content = {\LARGE \color{red} P-\thepage-1},
+        tikz = false
     }
 }
 \begin{document}
 
+\begin{center}
+    \includegraphics{example-image-a}\\
+    \includegraphics{example-image-a}
+\end{center}
 \lipsum[1-20]
 \end{document}

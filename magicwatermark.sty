@@ -1,9 +1,5 @@
 \ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2A}{magic watermark, author}
 
-
-\RequirePackage{everypage-1x}
-
-
 \msg_new:nnn {magicwatermark}{ Unable to parse } 
 {
   Unable~to~parse~this~list~parameter.^^J
@@ -58,6 +54,8 @@
 \bool_set_false:N \g__mw_is_append_bool
 \bool_new:N \g__mw_tikz_bool
 \bool_set_true:N \g__mw_tikz_bool
+\bool_new:N \g__mw_overlay_bool
+\bool_set_false:N \g__mw_overlay_bool
 
 \regex_const:Nn \c__mw_arabic_numbers_regex { ^\d+$ }
 \regex_const:Nn \c__mw_roman_numbers_regex { ^[ivxlcdm]+$ }
@@ -359,10 +357,10 @@
 {
   pages .tl_set:N = \g__mw_list_tl,
   style .tl_set:N = \g__mw_style_tl,
-  % style .code:n = \__mw_parse_style:n { #1 },
   content .tl_set:N = \g__mw_content_tl,
   is~append .bool_set:N = \g__mw_is_append_bool,
-  tikz .bool_set:N = \g__mw_tikz_bool
+  tikz .bool_set:N = \g__mw_tikz_bool,
+  overlay .bool_set:N = \g__mw_overlay_bool
 }
 
 \cs_new:Npn \__mw_parse_style: {
@@ -383,12 +381,6 @@
     }
   }
 }
-
-\keys_define:nn { mw }
-{
-  setup .code:n = \__mw_new_watermark:n {#1}
-}
-
 
 \cs_new:Npn \__mw_new_watermark:n #1 {
   \group_begin:
@@ -433,22 +425,43 @@
       \tl_gset:cV { g__mw_content_ \int_to_roman:n { ##1 } _tl } \l__mw_tmpb_tl 
     }
   }
+
+  \bool_if:NTF \g__mw_overlay_bool 
+  {
+    \tl_set:Nn \@tmp@value { foreground }
+  }
+  {
+    \tl_set:Nn \@tmp@value { background }
+  }
+  \exp_args:No \AddToHook{shipout/\@tmp@value}[magicwatermark]
+  {
+    \put(.5\paperwidth, -.5\paperheight)
+    {
+      \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
+      {
+        \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
+      }
+    }
+  }
   \group_end:
 }
 
 
-\NewDocumentCommand{\MagicWatermark}{m}{
+\DeclareHookRule{shipout/background}{magicwatermark}{before}{pgfrcs}
+
+
+\NewDocumentCommand\MagicWatermark { m }
+{
   \group_begin:
-    \AtBeginDocument{
-      \keys_set:nn { mw } { #1 }
-      \AddEverypageHook{
-        \tl_if_exist:cT { g__mw_content_ \int_to_roman:n { \value{page} }_tl }
-        {
-          \tl_use:c { g__mw_content_ \int_to_roman:n { \value{page} } _tl }
-        }
-      }
+    \AtBeginDocument
+    {
+      \clist_map_function:nN { #1 } \__mw_new_watermark:n
     }
   \group_end:
 }
 
 \@onlypreamble\MagicWatermark
+
+\endinput 
+
+% End of file magicwatermark.sty
