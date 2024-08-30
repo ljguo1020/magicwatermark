@@ -2,34 +2,36 @@
 
 \usepackage[margin = 2cm]{geometry}
 
-\usepackage{tikz}
 
-\usepackage{../magicwatermark}
+\usepackage[overlay = false]{../magicwatermark}
+\usepackage{tikz}
 
 \usepackage{lipsum}
 
 \usepackage{xcolor}
 
-\MagicWatermark{
-    {
-        pages = {1},
-        style= { scale = 5},
-        content = {\LARGE \color{red} P-\thepage},
-        tikz = true,
-        overlay = true
-    },
-    {
-        pages = {2-3},
-        style= { scale = 5},
-        content = {\LARGE \color{red} P-\thepage-1},
-        tikz = false
-    }
-}
+\usepackage{tcolorbox}
+\MagicWatermark[
+  {
+      pages = {*},
+      content = {P-\thepage},
+      style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily},
+  },
+  {
+    pages = {even},
+    style = {scale = 5, text = pink, opacity = 1},
+    content = {Watermark}
+  }
+]
+
+
 \begin{document}
 
-\begin{center}
-    \includegraphics{example-image-a}\\
-    \includegraphics{example-image-a}
-\end{center}
-\lipsum[1-20]
+
+\lipsum[1-50]
+
+
+
+
+
 \end{document}

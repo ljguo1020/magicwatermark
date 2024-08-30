@@ -1,4 +1,4 @@
-\ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2A}{magic watermark, author}
+\ProvidesExplPackage{magicwatermark}{2024/06/11}{1.2C}{The magicwatermark package}
 
 \msg_new:nnn {magicwatermark}{ Unable to parse } 
 {
@@ -16,6 +16,8 @@
 {
   Please~load~tikz~package~before~magicwatermark.
 }
+
+
 
 \seq_new:N \l__mw_tmpa_seq 
 \seq_new:N \l__mw_tmpb_seq 
@@ -60,9 +62,30 @@
 \regex_const:Nn \c__mw_arabic_numbers_regex { ^\d+$ }
 \regex_const:Nn \c__mw_roman_numbers_regex { ^[ivxlcdm]+$ }
 
-
-
 \int_new:N \g__mw_last_page_int 
+
+
+\keys_define:nn { mw / pkgoption }
+{
+  overlay .bool_gset:N = \g__mw_overlay_bool
+}
+
+\cs_if_exist:NTF \ProcessKeyOptions 
+{
+  \ProcessKeyOptions[ mw / pkgoption ]
+}
+{
+  \RequirePackage{l3keys2e}
+  \ProcessKeysOptions{ mw / pkgoption }
+}
+
+\bool_if:NTF \g__mw_overlay_bool 
+{
+  \tl_gset:Nn \@tmp@value { foreground }
+}
+{
+  \tl_gset:Nn \@tmp@value { background }
+}
 
 \AtBeginDocument{
   \int_compare:nTF { \@abspage@last = \number\maxdimen }
@@ -359,8 +382,7 @@
   style .tl_set:N = \g__mw_style_tl,
   content .tl_set:N = \g__mw_content_tl,
   is~append .bool_set:N = \g__mw_is_append_bool,
-  tikz .bool_set:N = \g__mw_tikz_bool,
-  overlay .bool_set:N = \g__mw_overlay_bool
+  tikz .bool_set:N = \g__mw_tikz_bool
 }
 
 \cs_new:Npn \__mw_parse_style: {
@@ -426,13 +448,6 @@
     }
   }
 
-  \bool_if:NTF \g__mw_overlay_bool 
-  {
-    \tl_set:Nn \@tmp@value { foreground }
-  }
-  {
-    \tl_set:Nn \@tmp@value { background }
-  }
   \exp_args:No \AddToHook{shipout/\@tmp@value}[magicwatermark]
   {
     \put(.5\paperwidth, -.5\paperheight)
@@ -450,14 +465,12 @@
 \DeclareHookRule{shipout/background}{magicwatermark}{before}{pgfrcs}
 
 
-\NewDocumentCommand\MagicWatermark { m }
+\NewDocumentCommand\MagicWatermark { O{} }
 {
-  \group_begin:
-    \AtBeginDocument
-    {
-      \clist_map_function:nN { #1 } \__mw_new_watermark:n
-    }
-  \group_end:
+  \AtBeginDocument
+  {
+    \clist_map_function:nN { #1 } \__mw_new_watermark:n
+  }
 }
 
 \@onlypreamble\MagicWatermark

@@ -127,7 +127,7 @@
     keywordstyle={\color[RGB]{178,34,34}\bfseries},
     commentstyle={\color[RGB]{102,205,170}\itshape},
     classoffset=1,
-    morekeywords = {setup, pages, content, is, append, style},
+    morekeywords = {pages, content, is, append, style, overlay, tikz, true, false},
     keywordstyle=\color{cyan!50!green}\bfseries,
   },
   example style,
@@ -135,27 +135,27 @@
   }
 
 
-\MagicWatermark{
-    setup = {
-        pages = {*},
-        content = {P-\thepage},
-        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+\MagicWatermark[
+  {
+    pages = {*},
+    content = {P-\thepage},
+    style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+  },
+  {
+    pages = {even},
+    style = {scale = 5, text = pink},
+    content = {Watermark},
+    is append
+  },
+  {
+    pages = {1},
+    style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large\linespread{1}\selectfont, opacity = .1}, 
+    content = {
+        \foreach \x in {0, ..., 500} {Magic Watermark }
     },
-    setup = {
-      pages = {even},
-      style = {scale = 5, text = pink},
-      content = {Watermark},
-      is append
-    },
-    setup = {
-      pages = {1},
-      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large\linespread{1}\selectfont, opacity = .1}, 
-      content = {
-          \foreach \x in {0, ..., 500} {Magic Watermark }
-      },
-      is append
-    }
-}
+    is append
+  }
+]
 
 
 \def\opt#1{\textcolor{magenta}{\texttt{#1}}}
@@ -168,30 +168,31 @@
 \vspace*{\fill}
 \begin{center}
   {\Huge \textcolor{teal}{\texttt{magicwatermark}} 宏包\footnote{\url{https://github.com/ljguo1020/magicwatermark}}} \\[.5cm]
-  {\Large 郭李军<ljguo1020@gmail.com>} \\[.5cm]
-  {\Large V1.2A}\\[1cm]
+  {\Large 郭李军<\url{ljguo1020@gmail.com}>} \\[.5cm]
+  {\Large Jérémy Just <\url{jeremy@jejust.fr}>}\\[.5cm]
+  {\Large V1.2C}\\[1cm]
 \begin{example}[]
-\MagicWatermark{
-    setup = {
-        pages = {*},
-        content = {P-\thepage},
-        style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+\MagicWatermark[
+  {
+    pages = {*},
+    content = {P-\thepage},
+    style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+  },
+  {
+    pages = {even},
+    style = {scale = 5, text = pink},
+    content = {Watermark},
+    is append
+  },
+  {
+    pages = {1},
+    style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large\linespread{1}\selectfont, opacity = .1}, 
+    content = {
+        \foreach \x in {0, ..., 500} {Magic Watermark }
     },
-    setup = {
-      pages = {even},
-      style = {scale = 5, text = pink},
-      content = {Watermark},
-      is append
-    },
-    setup = {
-      pages = {1},
-      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, 
-      content = {
-          \foreach \x in {0, ..., 500} {Magic Watermark }
-      },
-      is append
-    }
-} 
+    is append
+  }
+]
 \end{example}
 \end{center}
 
@@ -207,19 +208,24 @@
 
 \pkgname{} 是一个全新的水印宏包, 在 2022 年 6 月 17 日发布了第一版, 本次更新并不是基于第一版, 而是进行了重构.
 
-\pkgname{} 基于 \texttt{tikz} 和 \texttt{expl3}, 可以灵活的设置背景或水印.
+\pkgname{} 基于 \texttt{expl3} 宏包, 可以灵活的设置背景或水印.
 
 \section{使用}
-\pkgname{} 的使用, 相比于其它同类功能的包来说, 可以说是易用性最高的, 它只提供了一个命令 \verb|\MagicWatermark|, 命令参数由多个 \opt{setup} 规则组成.
 \begin{example}[]
-\MagicWatermark{
-  setup = {},
-  setup = {},
+\usepackage[<option>]{magicwatermark}
+\end{example}
+\pkgname{} 有一个宏包选项 \opt{overlay}, 控制水印是否覆盖内容, 默认为 \para{false}.
+
+与其他同类宏包相比，\pkgname{} 更注重易用性, 它仅提供了 \verb|\MagicWatermark|, 该命令接受一个参数, 参数由多个 \opt{group} 组成.
+\begin{example}[]
+\MagicWatermark[
+  {},
+  {},
   ...
-}
+]
 \end{example}
 
-\opt{setup} 内部接受四个键值选项, 用于配置水印的表现形式.
+每个 \opt{group} 接受五个键值选项, 用于配置水印的表现形式.
 
 \subsection{pages}
 \opt{pages} 接受一个逗号分割列表, 用于配置水印作用范围, 例如 \verb|pages = {2, 4, 5, 8-10}|, 表示选中页码为第 2, 4, 5, 8, 9, 10 这些页面.
@@ -256,45 +262,49 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
 \section{使用案例}
 \begin{example}[title = 为所有页面右上角添加页码]
 % \usepackage{tikz}
-\MagicWatermark{
-  setup = {
-      pages = {*},
-      content = {P-\thepage},
-      style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
+% \usepackage[overlay]{magicwatermark}
+\MagicWatermark[
+  {
+    pages = {*},
+    content = {P-\thepage},
+    style = {shift = {(.5\textwidth, .5\textheight + \headheight + \headsep)}, scale = 3, text = cyan, font = \ttfamily}
   }
-}
+]
 \end{example}
 
 \begin{example}[title = 为偶数页页面中心添加文字 Watermark]
 % \usepackage{tikz}
-\MagicWatermark{
-  setup = {
+% \usepackage{magicwatermark}
+\MagicWatermark[
+  {
     pages = {even},
     style = {scale = 5, text = pink},
     content = {Watermark},
     is append
   }
-}
+]
 \end{example}
 
 \begin{example}[title = 为第二页到最后一页设置铺满整个页面的文字]
 % \usepackage{tikz}
-\MagicWatermark{
-  setup = {
-      pages = {2-i},
-      style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, 
-      content = {
-          \foreach \x in {0, ..., 500} {Magic Watermark }
-      },
-      is append
+% \usepackage{magicwatermark}
+\MagicWatermark[
+  {
+    pages = {2-i},
+    style = {text width = 1.7\paperwidth, rotate = 45, align = left, font = \Large, opacity = .1}, 
+    content = {
+        \foreach \x in {0, ..., 500} {Magic Watermark }
+    },
+    is append
   }
-}
+]
 \end{example}
 
 \begin{example}[title = 为奇偶页设置不同水印]
 % \usepackage{tikz}
-\MagicWatermark{
-  setup = {
+% \usepackage{magicwatermark}
+\MagicWatermark[
+  {
     pages = {even},
     style = {scale = 8, rotate = 45, text=red, align = center,font = \linespread{2}\selectfont},
     content = {
@@ -304,7 +314,7 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
       Even MagicWatermark 
     }
   },
-  setup = {
+  {
     pages = {odd},
     style = {scale = 6, rotate = -45, text = cyan, text width = 1.7\paperwidth, font = \linespread{1.5}\selectfont, align = center},
     content = {
@@ -313,20 +323,21 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
       }
     }
   }
-}
+]
 \end{example}
 
 \begin{example}[title = 设置图片为水印]
 % \usepackage{tikz}
-\MagicWatermark{
-  setup = {
+% \usepackage{magicwatermark}
+\MagicWatermark[
+  {
     pages = {even},
     style = {opacity = 0.3},
     content = {
         \includegraphics{example-image-a}
     }
   },
-  setup = {
+  {
     pages = {odd},
     style = {opacity = .3, rotate=45, text width = 3\paperwidth},
     content = {
@@ -337,10 +348,11 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
       }
     }
   }
-}  
+]
 \end{example}
 
 \begin{example}[title = 禁用 tikz]
+% \usepackage{magicwatermark}
 \def\addhead#1#2{%
   \expandafter\gdef\csname head@content@#1\endcsname{#2}%
 }
@@ -360,14 +372,21 @@ pages = {3X + 1}         =>     1, 4, 7, 10, ..., 22
   \end{tikzpicture}
 }
 
-\MagicWatermark{
-  setup = {
+\MagicWatermark[
+  {
     pages = {2-5},
     tikz = false,
     content = \mywatermark
   }
-}
+]
 \end{example}
 
+
+\section{版本历史}
+\begin{itemize}
+  \item[V1.2A] 重构 magicwatermark.
+  \item[V1.2B] 取消了对 \texttt{everypage} 宏包的依赖.
+  \item[V1.2C] 新增了宏包选项 \opt{overlay}, 去掉了 \opt{setup} 规则. 将 \verb|\Magicwatermark| 的参数更改为可选参数.
+\end{itemize}
 
 \end{document}
