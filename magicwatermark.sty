@@ -17,7 +17,15 @@
   Please~load~tikz~package~before~magicwatermark.
 }
 
+\cs_if_exist:NF \tl_set:Ne 
+{
+  \cs_generate_variant:Nn \tl_set:Nn { Ne }
+}
 
+\cs_if_exist:NF \IfPackageLoadedTF
+{
+  \cs_set_eq:NN \IfPackageLoadedTF \@ifpackageloaded
+}
 
 \seq_new:N \l__mw_tmpa_seq 
 \seq_new:N \l__mw_tmpb_seq 
